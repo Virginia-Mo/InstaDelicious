@@ -1,6 +1,7 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { Providers } from '@/redux/provider/provider'
+import ProviderSession from '@/components/Providers/Providers'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -11,14 +12,20 @@ export const metadata = {
 
 export default function RootLayout({
   children,
+  session
 }: {
-  children: React.ReactNode
+  children: React.ReactNode,
+  session: any
 }) {
   return (
+    
     <html lang="en">
       <body className={inter.className}>
+        <ProviderSession>
       <Providers>{children}</Providers>
+      </ProviderSession>
       </body>
     </html>
+    
   )
 }

@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import {useEffect } from 'react'
-import { fetchUsers } from '@/redux/reducers/users'
-import { useAppDispatch, useAppSelector } from '@/types/reduxTypes'
-import { User } from '@/models/users'
+import { fetchUsers } from '@/redux/middlewares/users'
+import { useAppDispatch, useAppSelector } from '@/Types/reduxTypes'
+import { User } from '@/Types/users'
+import ButtonSign from '@/components/profile/buttonCompo'
 
 export default function Home() {
 
@@ -17,17 +18,18 @@ useEffect(()=> {
 
 
   return (
-    <main className="bg-red-100">
+      <main className="bg-red-100">
       <Link href="/about" >
       GO ! 
       </Link>
       <ul>
       {users.length >= 1 && 
       users.map((user: User) => (  
-        <li className="text-4xl text-center" key={user.id}> {user.username} </li>
+        <li className="text-4xl text-center " key={user.id}> {user.username} </li>
       ))
       } 
 </ul>
+<ButtonSign />
     </main>
   )
 }

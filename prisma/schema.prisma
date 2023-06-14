@@ -9,35 +9,38 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id        Int      @id @default(autoincrement()) @unique
-  createdAt DateTime @default(now())
-  username  String   @unique
-  email     String   @unique
+  id        Int       @id @unique @default(autoincrement())
+  createdAt DateTime  @default(now())
+  username  String    @unique
+  email     String    @unique
   password  String
   posts     Post[]
-  comments Comment[]
-  likes    Likes[]
+  comments  Comment[]
+  likes     Likes[]
 }
+
 model Follower {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  id                Int      @id @default(autoincrement())
+  createdAt         DateTime @default(now())
   following_user_id Int
   follower_user_id  Int
 }
+
 model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  title     String   
-  url       String   @unique 
-  description  String  
-  ingredients String[]  
-  details   String 
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
-  tags      Tag[]
-  comments  Comment[]
-  like      Likes?    
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  title       String
+  url         String    @unique
+  description String
+  ingredients String[]
+  details     String
+  author      User?     @relation(fields: [authorId], references: [id])
+  authorId    Int?
+  tags        Tag[]
+  comments    Comment[]
+  like        Likes?
 }
 
 model Tag {
@@ -56,11 +59,12 @@ model Comment {
   post      Post?    @relation(fields: [postId], references: [id])
   postId    Int?
 }
+
 model Likes {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   number    Int
   user      User[]
-  post      Post?   @relation(fields: [postId], references: [id])
-  postId    Int?    @unique
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    Int?     @unique
 }
