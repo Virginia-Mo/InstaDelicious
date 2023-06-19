@@ -1,8 +1,7 @@
-import NextAuth, { Awaitable, NextAuthOptions, RequestInternal, User } from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
+import NextAuth, {RequestInternal, } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import axios from "axios"
-
+import { User } from "@/Types/models"
 
 interface Credentials {
   email: string
@@ -26,10 +25,9 @@ const handler = NextAuth ({
           email: credentials.email,
           password: credentials.password,
         })
-        const user = await res.data
-        console.log("HEY", user)
+        const user : User = await res.data 
         if (user){
-          return user
+          return user 
         } else {
           return null
         }

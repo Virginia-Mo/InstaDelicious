@@ -1,31 +1,36 @@
 import {createSlice} from "@reduxjs/toolkit"
 import type { PayloadAction } from '@reduxjs/toolkit'
-import {User} from '../../Types/users'
-import {fetchUsers} from '../middlewares/users'
+import {fetchUser} from '../middlewares/users'
+import { UserDB } from "@/Types/models"
+
 
 interface SliceState {
-    users : User[]
+    user : UserDB
 };
 
 const initialState : SliceState = {
-    users : [],
+    user : {} as UserDB
 };
 
 
 export const userSlice = createSlice({
-    name: "users",
+    name: "user",
     initialState,
     reducers : {
-        getUsers : (state, action: PayloadAction<User>) => {
-            state.users.push(action.payload)
+        getUser : (state, action: PayloadAction<UserDB>) => {
+            state.user = action.payload
         },
        },
     extraReducers: (builder) => {
-        builder.addCase(fetchUsers.fulfilled, (state, action) => {
-            state.users = action.payload
+        // builder.addCase(fetchUsers.fulfilled, (state, action) => {
+        //     state.user = action.payload
+        // })
+        builder.addCase(fetchUser.fulfilled, (state, action) => {
+            console.log("action", action)
+            state.user = action.payload
         })
         }
 })
-export const {getUsers} =  userSlice.actions;
+export const { getUser } =  userSlice.actions;
 
 export default userSlice; 

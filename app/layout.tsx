@@ -1,8 +1,11 @@
+'use client'
+
 import './globals.css'
 import { Inter } from 'next/font/google'
-import { Providers } from '@/redux/provider/provider'
+import { Provider } from 'react-redux';
 import ProviderSession from '@/components/Providers/Providers'
-
+import { PersistGate } from 'redux-persist/integration/react'
+import { store, Persistor } from '@/redux/store/store'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -11,8 +14,7 @@ export const metadata = {
 }
 
 export default function RootLayout({
-  children,
-  session
+  children
 }: {
   children: React.ReactNode,
   session: any
@@ -22,7 +24,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ProviderSession>
-      <Providers>{children}</Providers>
+      <Provider store={store}>
+      <PersistGate persistor={Persistor}>
+        {children}
+        </PersistGate>
+        </Provider>
       </ProviderSession>
       </body>
     </html>

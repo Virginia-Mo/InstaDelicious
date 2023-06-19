@@ -12,19 +12,30 @@ export async function POST( request : Request) {
     
     const body : RequestData = await request.json()
     
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
         where: {
             email: body.email
+        },
+        include: {
+            posts: {
+                include: {
+                    comments: true,
+                    like: true
+                }
+            },
+            follow: true,
         }
     })
     const checkPassword = await bcrypt.compare(body.password, user?.password)
     if (user && checkPassword){
-       const {password, ...userData} = user
-       const accessToken = signJwtAccess(userData)
-       const result = {
-              ...userData,
-                accessToken
-       }
+        const {password, ...userData} = user
+        
+    const accessToken = signJwtAccess(userData)
+    const result = {
+            userData,
+            accessToken
+    }
+    
        return new Response(JSON.stringify(result))
 
     } else return new Response (JSON.stringify({message: 'Invalid email or password'}))
