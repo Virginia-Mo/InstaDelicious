@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt')
 interface RequestData {
     email: string,
     password: string,
-    username: string
+    username: string,
 }
 
 export async function POST(req: Request) {

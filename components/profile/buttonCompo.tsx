@@ -1,7 +1,7 @@
 'use client'
 
 import { useSession, signIn, signOut } from "next-auth/react"
-import React, { use, useEffect } from "react"
+import React, {useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "@/Types/reduxTypes"
 import { Post, User, UserDB } from "@/Types/models"
 import { AddLikes, MinusLikes } from "@/async_calls/likes"
@@ -30,7 +30,7 @@ export default function ButtonSign () {
       <>
       {user !== null && Object.keys(user).length > 0 &&
       
-     <><p>Signed in as</p><br /><li>
+     <><p>Signed in as {user.username}</p><br /><li>
             {user.posts.map((post: Post) => (
               <><div key={post.id}>
                 <img src={post.url}

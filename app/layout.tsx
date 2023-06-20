@@ -21,8 +21,8 @@ export default function RootLayout({
 }) {
   return (
     
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className=''>
+      <body className='${inter.className} h-screen' >
         <ProviderSession>
       <Provider store={store}>
       <PersistGate persistor={Persistor}>

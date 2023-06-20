@@ -13,13 +13,7 @@ const handler = NextAuth ({
   providers: [
     CredentialsProvider({
       name: "",
-      credentials: {
-        email: {
-          label: "Email",
-          type: "email",
-        },
-        password: { label: "Password", type: "password" }
-      },
+      credentials: {},
       async authorize (credentials: Credentials, req : RequestInternal) {
         const res = await axios.post("http://localhost:3000/api/login", {
           email: credentials.email,
@@ -41,10 +35,11 @@ const handler = NextAuth ({
     async session({session, token}) {
     session.user = token as any
     return session
-    }}
-//  pages: {
-//     signIn: "/signin",
-//  }
+    }},
+  pages: {
+    signIn: "/",
+    
+ }
 
 })
 
