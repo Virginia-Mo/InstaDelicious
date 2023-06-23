@@ -13,7 +13,6 @@ const schema = object({
 }).required()
 
 const LoginForm = () => {
-    const [error, setError] = useState('')
 
     const { handleSubmit, control, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
@@ -23,9 +22,10 @@ const LoginForm = () => {
     }
 
   return (
-    <form action="" onSubmit={handleSubmit(onSubmit)}className='flex flex-col gap-7 items-center  py-10'>
+    <>
+      <h2 className='text-center text-black font-sans font-bold text-5xl '>InstaDelicious</h2>
+    <form action="" onSubmit={handleSubmit(onSubmit)}className='flex flex-col gap-7 items-center py-10'>
       <div className='border-gray-200 border-2 rounded-lg py-4'>
-      <h2 className='text-center text-black font-sans font-bold text-xl '>InstaDelicious</h2>
         <Controller
         name="email"
         control={control}
@@ -59,11 +59,12 @@ const LoginForm = () => {
    <Button type='submit' variant='outlined' className='w-80'>Login</Button></div>
    </div>
    <div className='border-gray-200 border-2 rounded-lg w-full pb-5'>
-   <p className='text-black py-3'>You don't have an account ?</p>
+   <p className='text-black py-3 font-mono'>You don't have an account ?</p>
    <Button type='submit' variant='outlined' className='mt-10 w-80' color='secondary'>
     <Link href="/signup">Sign up</Link></Button>
     </div>
     </form>
+    </>
   )
 }
 

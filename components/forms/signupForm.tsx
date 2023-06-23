@@ -12,13 +12,15 @@ const schema = object({
     email: string().required('Email is required').email('Email is invalid').trim(),
     password: string().required('Password is required').min(6, 'Password must be between 6 and 20 characters').max(20, 'Password must be between 6 and 20 characters').trim(),
     confirmPassword: string().required('Please re-enter your password').oneOf([ref("password")], "Passwords don't match !").trim(),
+    picture : string()
 }).required()
 
 interface dataForm {
     username: string,
     email: string,
     password: string,
-    confirmPassword: string
+    confirmPassword: string,
+    picture: string
 }
 
 const SignupForm = () => {
@@ -32,7 +34,12 @@ const SignupForm = () => {
     }
 
   return (
-    <form action="" onSubmit={handleSubmit(onSubmit)}className='flex flex-col gap-7'>
+    <div className='flex items-center h-screen flex-col gap-14'>
+      <div className='mt-20'>
+      <h1 className='text-center text-black font-bold text-6xl font-sans'>InstaDelicious</h1>
+      </div>
+    <form action="" onSubmit={handleSubmit(onSubmit)}className='flex flex-col gap-7 w-1/3 items-center border-gray-200 border-2 rounded-lg py-4'>
+    <h2 className='text-center text-black font-bold text-3xl mt-4 font-mono'>Create your account </h2>
 <Controller
         name="username"
         control={control}
@@ -93,10 +100,23 @@ const SignupForm = () => {
         placeholder='Please re-enter your password'/> 
   }
 /> 
+<Controller
+        name="picture"
+        control={control}
+        defaultValue=''
+        render={({field}) => <TextField {...field}
+        id='picture'
+        type='text'
+        variant='standard'
+        label="Choose your profile picture"
+        className='w-80 '/> 
+  }
+/> 
    <Button type='submit' variant='outlined' className='mt-10 w-80'>Submit</Button>
    <Button variant='outlined' className='mt-10 w-80' color='secondary'>
     <Link href="/">Go to sign in Page</Link></Button>
     </form>
+    </div>
   )
 }
 

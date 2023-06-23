@@ -12,7 +12,6 @@ interface stateType {
 }
 
 export const AddPost = async (id: number, data : stateType) => {
-console.log("ICI", id)
     try {
         const response = await axios.post(`/api/posts`, 
          {

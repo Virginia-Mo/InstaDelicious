@@ -47,7 +47,8 @@ export default function ButtonSign () {
               <div onClick={() => AddOneLikes(post.id)}>CLICK</div>
               <div onClick={() => MinusOneLikes(post.id)}>CLOCK</div>
               </>
-            ))}</li><button onClick={() => signOut()}>Sign out</button></>
+            ))}</li>
+            <button onClick={() => signOut()} className="text-black ">Sign out</button></>
         
       }
        {user !== null && Object.keys(user).length === 0 &&

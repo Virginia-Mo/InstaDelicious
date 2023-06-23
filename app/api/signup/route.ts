@@ -9,6 +9,7 @@ interface RequestData {
     email: string,
     password: string,
     username: string,
+    picture: string
 }
 
 export async function POST(req: Request) {
@@ -36,9 +37,14 @@ export async function POST(req: Request) {
                 email : body.email,
                 password : hashedPassword,
                 username : body.username,
+                picture : body.picture
         }
         })
-        return NextResponse.json(user)
+        if (!user) {
+            throw new Error('Unable to create user')
+        }  
+
+        return NextResponse.json({message : 'Your account has been created successfully, you can now login ! '})
     }
     catch (error){
         console.log(error)

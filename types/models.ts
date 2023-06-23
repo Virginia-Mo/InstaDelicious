@@ -6,6 +6,7 @@ export interface User {
     id: number,
     posts: Post[],
     username: string,
+    picture: string
     }
     accessToken: string,
   }
@@ -16,6 +17,7 @@ export interface UserDB {
     id: number,
     posts: Post[],
     username: string,
+    picture: string
 }
 export interface Post {
   authorId: number,

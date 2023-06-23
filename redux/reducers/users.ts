@@ -5,11 +5,13 @@ import { UserDB } from "@/Types/models"
 
 
 interface SliceState {
-    user : UserDB
+    user : UserDB,
+    online : boolean,  
 };
 
 const initialState : SliceState = {
-    user : {} as UserDB
+    user : {} as UserDB,
+    online : false,
 };
 
 
@@ -17,20 +19,23 @@ export const userSlice = createSlice({
     name: "user",
     initialState,
     reducers : {
-        getUser : (state, action: PayloadAction<UserDB>) => {
+        getUser : (state, action: PayloadAction) => {
             state.user = action.payload
+        },
+        setOnline : (state, action : PayloadAction<boolean>) => {
+            state.online = action.payload
         },
        },
     extraReducers: (builder) => {
         // builder.addCase(fetchUsers.fulfilled, (state, action) => {
         //     state.user = action.payload
+        // // })
+        // builder.addCase(fetchUser.fulfilled, (state, action) => {
+        //     console.log("action", action)
+        //     state.user = action.payload
         // })
-        builder.addCase(fetchUser.fulfilled, (state, action) => {
-            console.log("action", action)
-            state.user = action.payload
-        })
         }
 })
-export const { getUser } =  userSlice.actions;
+export const { getUser, setOnline } =  userSlice.actions;
 
 export default userSlice; 

@@ -12,10 +12,11 @@ datasource db {
 
 model User {
   id        Int        @id @unique @default(autoincrement())
-  createdAt DateTime   @default(now())
+  createdAt DateTime   @default(now()) @db.Date
   username  String     @unique
   email     String     @unique
   password  String
+  picture   String?    @default("https://w7.pngwing.com/pngs/753/432/png-transparent-user-profile-2018-in-sight-user-conference-expo-business-default-business-angle-service-people-thumbnail.png")
   posts     Post[]
   comments  Comment[]
   likes     Likes[]
@@ -24,7 +25,7 @@ model User {
 
 model Follower {
   id                Int      @id @default(autoincrement())
-  createdAt         DateTime @default(now())
+  createdAt         DateTime @default(now()) @db.Date
   user_id           User     @relation(fields: [userId], references: [id])
   userId            Int      @unique
   following_user_id Int
@@ -33,7 +34,7 @@ model Follower {
 
 model Post {
   id          Int         @id @default(autoincrement())
-  createdAt   DateTime    @default(now())
+  createdAt   DateTime    @default(now()) @db.Date
   title       String
   url         String      @unique
   description String
@@ -48,13 +49,13 @@ model Post {
 
 model Tag {
   id        Int         @id @default(autoincrement())
-  createdAt DateTime    @default(now())
+  createdAt DateTime    @default(now()) @db.Date
   name      String      @unique
   posts     PostToTag[]
 }
 
 model PostToTag {
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Date
   post      Post     @relation(fields: [postId], references: [id])
   postId    Int
   tag       Tag      @relation(fields: [tagId], references: [id])
@@ -65,7 +66,7 @@ model PostToTag {
 
 model Comment {
   id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Date
   text      String
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
@@ -75,7 +76,7 @@ model Comment {
 
 model Likes {
   id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Date
   amount    Int      @default(0)
   user      User[]
   post      Post?    @relation(fields: [postId], references: [id])

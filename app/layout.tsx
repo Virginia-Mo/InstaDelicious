@@ -1,12 +1,23 @@
 'use client'
 
 import './globals.css'
-import { Inter } from 'next/font/google'
 import { Provider } from 'react-redux';
 import ProviderSession from '@/components/Providers/Providers'
 import { PersistGate } from 'redux-persist/integration/react'
 import { store, Persistor } from '@/redux/store/store'
-const inter = Inter({ subsets: ['latin'] })
+import { Dancing_Script, Inter } from 'next/font/google';
+
+const dancing = Dancing_Script({ 
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-dancing'})
+
+const inter = Inter({ 
+    subsets: ['latin'],
+    display: 'swap',
+    weight: ['400', '700'],
+    variable: '--font-inter'})
+  
 
 export const metadata = {
   title: 'Create Next App',
@@ -21,8 +32,8 @@ export default function RootLayout({
 }) {
   return (
     
-    <html lang="en" className=''>
-      <body className='${inter.className} h-screen' >
+    <html lang="en" className={` ${inter.variable} ${dancing.variable} h-screen` }>
+      <body >
         <ProviderSession>
       <Provider store={store}>
       <PersistGate persistor={Persistor}>
@@ -30,6 +41,7 @@ export default function RootLayout({
         </PersistGate>
         </Provider>
       </ProviderSession>
+      <footer> <p className='text-center text-black'>CopyRights @ Virginia Mo</p></footer>
       </body>
     </html>
     

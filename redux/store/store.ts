@@ -1,7 +1,7 @@
 import { combineReducers, getDefaultMiddleware , configureStore} from '@reduxjs/toolkit'
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, } from 'redux-persist';
 import {userSlice} from '../reducers/users';
-import {tagSlice} from '../reducers/tag';
+import {messageSlice} from '../reducers/message';
 import storage from 'redux-persist/lib/storage';
 import {commentsSlice} from '../reducers/comments';
 
@@ -12,7 +12,7 @@ const persistConfig = {
 }
 const reducers = combineReducers({ 
   user : userSlice.reducer, 
-  tag: tagSlice.reducer, 
+  message: messageSlice.reducer, 
   comment: commentsSlice.reducer });
 
 const persistedReducer = persistReducer(persistConfig, reducers)
