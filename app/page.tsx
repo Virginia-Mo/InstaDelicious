@@ -22,9 +22,9 @@ const dispatch = useAppDispatch()
     const user = useAppSelector((state) => state.persistedReducer.user.user)
   return (
   <>
-      {<main >
+      {<main className='flex h-full'>
         { session?.user.userData &&
-        <div>
+        <div className='w-full'>
        <Profile/>
        </div>
        }

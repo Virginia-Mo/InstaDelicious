@@ -43,15 +43,16 @@ const SmallAvatar = styled(Avatar)(({ theme }) => ({
 export default function BadgeAvatars({user} : {user: UserDB}) {
  
   return (
-    <Stack direction="row" spacing={2}>
+    <Stack direction="row" spacing={2} >
       <StyledBadge
         overlap="circular"
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         variant="dot"
       >
         <Avatar alt={user.username} src={user.picture} sx={{ width: 62, height: 62}} />
+     
       </StyledBadge>
-      
+         <p className='flex justify-center items-center'>{user.username}</p>
     </Stack>
   );
 }

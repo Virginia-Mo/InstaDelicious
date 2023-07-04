@@ -17,8 +17,9 @@ const Navbar = () => {
     signOut()
   }
   return (
-    <nav className='border-r-stone-500 h-auto flex flex-col sticky'>
-        <h2 className='font-sans text-4xl py-10 px-4'> InstaDelicious</h2>
+    <aside className='sticky top-0 left-0'>
+    <nav className='border-r-stone-500 h-full flex flex-col'>
+        <h2 className='font-sans text-4xl py-6 px-4'> InstaDelicious</h2>
         <ul className='flex flex-col font-mono text-xl gap-4 px-4'>
             <li><HomeIcon fontSize="large"/> Home</li>
             <li><SearchIcon fontSize="large"/> Search</li>
@@ -26,6 +27,7 @@ const Navbar = () => {
         </ul>
         <p className='absolute left-0 bottom-0 px-4' onClick={handleLogOut}><LogoutIcon fontSize='large'  /> Log Out </p>
     </nav>
+    </aside>
   )
 }
 

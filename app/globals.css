@@ -20,3 +20,16 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: #fffbfb
 }
+.section-scroll::-webkit-scrollbar {
+  display: none;
+}
+.section-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.CardImage {
+  height : 30rem
+}
+.CardA {
+  margin : 0 auto
+}

@@ -40,7 +40,7 @@ export default function CardPost({post} : {post: Post}) {
   };
   
   return (
-    <Card sx={{ maxWidth: 600 }}>
+    <Card sx={{ maxWidth: 600 }} className='CardA'>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -60,6 +60,7 @@ export default function CardPost({post} : {post: Post}) {
         height="194"
         image={post.url}
         alt={post.title}
+        className='CardImage'
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">

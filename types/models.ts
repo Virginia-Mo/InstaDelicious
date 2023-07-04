@@ -42,8 +42,8 @@ export interface Follow {
   id: number,
   createdAt: Date,
   userId : number,
-  following_user_id: number,
-  follower_user_id  : number
+  following_user_id: number[],
+  follower_user_id  : number[]
 }
 export interface Like {
   id: number,

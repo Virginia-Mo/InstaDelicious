@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     
     <html lang="en" className={` ${inter.variable} ${dancing.variable} h-screen` }>
-      <body >
+      <body className='h-screen' >
         <ProviderSession>
       <Provider store={store}>
       <PersistGate persistor={Persistor}>

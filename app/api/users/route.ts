@@ -7,7 +7,17 @@ export async function GET(
     req : NextApiRequest,
     res : NextApiResponse) {
         try {
-            const users = await prisma.user.findMany()    
+            const users = await prisma.user.findMany(
+              {include: {
+                posts: {
+                    include: {
+                        comments: true,
+                        like: true
+                    }
+                },
+                follow: true,
+            }}
+            )    
            return NextResponse.json(users)
          }
          catch (error){

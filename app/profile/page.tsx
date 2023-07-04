@@ -2,43 +2,79 @@
 
 import { UserDB } from '@/Types/models'
 import Navbar from '@/components/navBar/Navbar'
-import React, {useEffect } from "react"
+import React, {use, useEffect } from "react"
 import { useAppSelector, useAppDispatch } from '@/Types/reduxTypes'
 import CardPost from '@/components/cardPost/cardPost'
 import BadgeAvatars from '@/components/avatar/avatar'
 import { useSession } from 'next-auth/react'
-import { getConnectedUser } from '@/async_calls/user/getUser'
-import { setOnline } from '@/redux/reducers/users'
-import { fetchUser } from '@/redux/middlewares/users'
+import { getConnectedUser, getUsers} from '@/async_calls/user/getUser'
+import { getFollowers, getFollowing } from '@/redux/reducers/users'
 
 export default function  Profile() {
   const { data: session } = useSession()
   const dispatch = useAppDispatch()
-  console.log(session)
   const id  = session?.user.userData.id
 
-  useEffect(() => {
-  getConnectedUser(id)
-  }, [id])
-  const user : UserDB = useAppSelector((state) => state.persistedReducer.user.user)
+  const user  = useAppSelector((state) => state.persistedReducer.user.user)
   
-  const online = useAppSelector((state) => state.persistedReducer.user.online)
+  const users  = useAppSelector((state) => state.persistedReducer.user.users)
+  
+  const followers  = useAppSelector((state) => state.persistedReducer.user.followers)
+  const following  = useAppSelector((state) => state.persistedReducer.user.following)
+
+
+  const getFollower = () => {
+    let followerArray : UserDB[] = []
+    if (user !== undefined && Object.keys(user).length > 0) {
+    let followerInfo : number[] = user.follow[0].follower_user_id  
+
+    if (followerInfo.length > 0) {
+      followerInfo.forEach((element : number) => {
+        let foundPeople =  users.find((user) => user.id === element)
+
+        if (foundPeople){
+          followerArray.push(foundPeople)
+        }
+      })
+      dispatch(getFollowers(followerArray))
+        }
+      }
+    }
+
+
+  useEffect(() => {
+    getUsers()
+    getConnectedUser(id)
+    getFollower()
+  }, [id])
+
+  const followerPost = followers.map((user) => user.posts)
+  const fArray = followerPost.flat()
+  const sortedArray = fArray.sort((a, b) => b.id - a.id)
+  console.log("sortedArray", sortedArray)
+      // let Following = user.follow[0].following_user_id
+      
   return (
-    <div className='text-black flex w-full gap-20'>
+    <div className='text-black flex w-full gap-10 h-screen justify-between mt-4'>
         <Navbar />
         {user !== null && Object.keys(user).length > 0 &&
-        <><section className='flex flex-col gap-10 justify-center items-center'>
-          <div>
-            {user.posts.map((post) => (
-              <article key={post.id}>
+        <><section className=' overflow-auto section-scroll grow'>
+          <div className='flex flex-col gap-10 justify-center items-center'>
+            {sortedArray.map((post) => (
+              <article key={post.id} className='w-full'>
                 <CardPost post={post} />
               </article>
             ))}
           </div>
-        </section><section>
+        </section><section className='grow'>
             <BadgeAvatars user={user} />
+            <h1 className='text-2xl font-bold text-center mt-8'>Your followers</h1>
+            {
+              followers.map((user) => (
+                <><BadgeAvatars user={user} /><p key={user.id}>{user.username}</p></>))
+            }
           </section></>
-        }
+        } 
     </div>
   )
 }
