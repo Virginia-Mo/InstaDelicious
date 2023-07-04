@@ -6,49 +6,40 @@ import { useAppSelector, useAppDispatch } from '@/Types/reduxTypes'
 import BadgeAvatars from '@/components/avatar/avatar'
 import CardPost from '@/components/cardPost/cardPost'
 import BigAvatars from '@/components/avatar/bigavatar'
-import { getFollowers, getFollowing } from '@/redux/reducers/users'
+import { getOnlineUserFollower } from '@/redux/reducers/users'
 export default function Profile ({ params }: { params: { id: number } }) {
 
-  const users = useAppSelector((state) => state.persistedReducer.user.users)
-  const followers = useAppSelector((state) => state.persistedReducer.user.followers)
-  const id = +params.id
-  const foundUser = users.find((user) => user.id === id)
+  const foundUser = useAppSelector((state) => state.persistedReducer.user.onlineUser)
+  const followers = useAppSelector((state) => state.persistedReducer.user.userFollower)
+  
+  const users  = useAppSelector((state) => state.persistedReducer.user.users)
+  
 
   const dispatch = useAppDispatch()
 
-  function getUserFollower (userInf : UserDB)  {
-    console.log("GO", userInf)
-        let followerArray : UserDB[] = []
-        if (userInf !== undefined) {
-          if (userInf.follow.length === 0) {
-            console.log("empty")
-            dispatch(getFollowers())
-          } else {
-console.log("not empty")
-        let followerInfo : number[] = userInf.follow[0].follower_user_id  
-    
-        if (followerInfo.length > 0) {
-          followerInfo.forEach((element : number) => {
-            let foundPeople =  users.find((user) => user.id === element)
-    
-            if (foundPeople){
-              followerArray.push(foundPeople)
-            }
-          })
-          console.log("ARRAY", followerArray)
-          dispatch(getFollowers(followerArray))
-           return
-        } else {
-          dispatch(getFollowers())
-           }}}
+  const getFollower = (user) => {
+    let followerArray : UserDB[] = []
+    if (user !== undefined && Object.keys(user).length > 0) {
+    let followerInfo : number[] = user.follow[0].follower_user_id  
+
+    if (followerInfo.length > 0) {
+      followerInfo.forEach((element : number) => {
+        let foundPeople =  users.find((user) => user.id === element)
+
+        if (foundPeople){
+          followerArray.push(foundPeople)
         }
-useEffect(() => {
-if (foundUser){
-   console.log("foundUser", foundUser)
-  getUserFollower(foundUser)
-  console.log("followers2", followers)
-}
-}, [])
+      })
+      console.log("followerArray", followerArray)
+      dispatch(getOnlineUserFollower(followerArray))
+        }
+      }
+    }
+
+    useEffect(() => {
+        getFollower(foundUser)
+      }, [foundUser])
+
 
   return (
     <div className='flex h-screen'>

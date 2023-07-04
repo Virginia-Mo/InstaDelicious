@@ -6,6 +6,8 @@ import { UserDB, User } from "@/Types/models"
 
 interface SliceState {
     user : UserDB,
+    onlineUser : UserDB,
+    userFollower : UserDB[],
     users : UserDB[],
     followers : UserDB[],
     following : UserDB[],
@@ -15,6 +17,8 @@ interface SliceState {
 
 const initialState : SliceState = {
     user : {} as UserDB,
+    onlineUser : {} as UserDB,
+    userFollower : [],
     users : [],
     followers : [],
     following : [],
@@ -27,6 +31,12 @@ export const userSlice = createSlice({
     name: "user",
     initialState,
     reducers : {
+        getOnlineUser : (state, action: PayloadAction) => {
+            state.onlineUser = action.payload
+        },
+        getOnlineUserFollower : (state, action: PayloadAction) => {
+            state.userFollower = action.payload
+        },
         getUser : (state, action: PayloadAction) => {
             state.user = action.payload
         },
@@ -34,7 +44,13 @@ export const userSlice = createSlice({
             state.users = action.payload
         },
         getFollowers : (state, action: PayloadAction) => {
-            state.followers = action.payload
+            console.log("action", action.payload)
+            // if (action.payload === undefined){
+            //     state.followers = []
+            // } else {
+            //     state.followers = []
+                state.followers = action.payload
+            // }
     },
         getFollowing : (state, action: PayloadAction) => {
             state.following = action.payload
@@ -54,6 +70,6 @@ export const userSlice = createSlice({
         // })
         }
 })
-export const { getUser, setOnline, getAllUsers, getFollowers, getFollowing } =  userSlice.actions;
+export const { getUser, setOnline, getAllUsers, getFollowers, getFollowing, getOnlineUser, getOnlineUserFollower } =  userSlice.actions;
 
 export default userSlice; 

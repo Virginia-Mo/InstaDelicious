@@ -8,7 +8,7 @@ import CardPost from '@/components/cardPost/cardPost'
 import BadgeAvatars from '@/components/avatar/avatar'
 import { useSession } from 'next-auth/react'
 import { getConnectedUser, getUsers} from '@/async_calls/user/getUser'
-import { getFollowers, getFollowing } from '@/redux/reducers/users'
+import { getOnlineUserFollower } from '@/redux/reducers/users'
 import Link from 'next/link'
 
 export default function Home() {
@@ -16,11 +16,11 @@ export default function Home() {
   const dispatch = useAppDispatch()
   const id  = session?.user.userData.id
 
-  const user  = useAppSelector((state) => state.persistedReducer.user.user)
+  const user  = useAppSelector((state) => state.persistedReducer.user.onlineUser)
   
   const users  = useAppSelector((state) => state.persistedReducer.user.users)
   
-  const followers  = useAppSelector((state) => state.persistedReducer.user.followers)
+  const followers  = useAppSelector((state) => state.persistedReducer.user.userFollower)
   const following  = useAppSelector((state) => state.persistedReducer.user.following)
 
 
@@ -37,7 +37,8 @@ export default function Home() {
           followerArray.push(foundPeople)
         }
       })
-      dispatch(getFollowers(followerArray))
+      console.log("followerArray", followerArray)
+      dispatch(getOnlineUserFollower(followerArray))
         }
       }
     }
@@ -46,6 +47,7 @@ export default function Home() {
   useEffect(() => {
     getUsers()
     getConnectedUser(id)
+    console.log("user", user)
     getFollower(user)
   }, [id])
 
@@ -69,7 +71,7 @@ export default function Home() {
           </div>
         </section>
         <section className='grow'>
-        <Link href={`/profile/${user.id}`}>
+        <Link href={`/profile`}>
             <BadgeAvatars user={user} />
         </Link>
             <h1 className='text-2xl font-bold text-center mt-8'>Your followers</h1>
