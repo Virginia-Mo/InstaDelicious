@@ -9,8 +9,9 @@ import BadgeAvatars from '@/components/avatar/avatar'
 import { useSession } from 'next-auth/react'
 import { getConnectedUser, getUsers} from '@/async_calls/user/getUser'
 import { getFollowers, getFollowing } from '@/redux/reducers/users'
+import Link from 'next/link'
 
-export default function  Profile() {
+export default function Home() {
   const { data: session } = useSession()
   const dispatch = useAppDispatch()
   const id  = session?.user.userData.id
@@ -23,7 +24,7 @@ export default function  Profile() {
   const following  = useAppSelector((state) => state.persistedReducer.user.following)
 
 
-  const getFollower = () => {
+  const getFollower = (user) => {
     let followerArray : UserDB[] = []
     if (user !== undefined && Object.keys(user).length > 0) {
     let followerInfo : number[] = user.follow[0].follower_user_id  
@@ -45,7 +46,7 @@ export default function  Profile() {
   useEffect(() => {
     getUsers()
     getConnectedUser(id)
-    getFollower()
+    getFollower(user)
   }, [id])
 
   const followerPost = followers.map((user) => user.posts)
@@ -66,12 +67,20 @@ export default function  Profile() {
               </article>
             ))}
           </div>
-        </section><section className='grow'>
+        </section>
+        <section className='grow'>
+        <Link href={`/profile/${user.id}`}>
             <BadgeAvatars user={user} />
+        </Link>
             <h1 className='text-2xl font-bold text-center mt-8'>Your followers</h1>
             {
               followers.map((user) => (
-                <><BadgeAvatars user={user} /><p key={user.id}>{user.username}</p></>))
+                <>
+                <Link href={`/profile/${user.id}`}>
+                <BadgeAvatars user={user} />
+                <p key={user.id}>{user.username}</p>
+                </Link>
+                </>))
             }
           </section></>
         } 

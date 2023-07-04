@@ -5,13 +5,13 @@ import React, {useEffect } from "react"
 import LoginForm from '@/components/forms/loginForm'
 import ButtonSign from '@/components/profile/buttonCompo'
 import { useSession, signIn, signOut } from "next-auth/react"
-import Profile from './profile/page'
+import Home from './home/page'
 import { useAppDispatch, useAppSelector } from '@/Types/reduxTypes'
 import { setOnline } from '@/redux/reducers/users'
 import { fetchUser } from '@/redux/middlewares/users'
 // import React, {useEffect } from "react"
 
-export default function Home() {
+export default function FirstPage() {
 const dispatch = useAppDispatch()
     const { data: session } = useSession()
     // if (session) {
@@ -25,7 +25,7 @@ const dispatch = useAppDispatch()
       {<main className='flex h-full'>
         { session?.user.userData &&
         <div className='w-full'>
-       <Profile/>
+       <Home/>
        </div>
        }
         {!session?.user  && 

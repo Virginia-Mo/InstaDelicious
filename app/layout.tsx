@@ -37,6 +37,7 @@ export default function RootLayout({
         <ProviderSession>
       <Provider store={store}>
       <PersistGate persistor={Persistor}>
+        
         {children}
         </PersistGate>
         </Provider>

@@ -8,12 +8,13 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { signOut } from 'next-auth/react';
 import { useAppDispatch } from '@/Types/reduxTypes';
 import {getUser, setOnline} from '@/redux/reducers/users';
+import Link from 'next/link';
 
 const Navbar = () => {
   const dispatch = useAppDispatch()
   const handleLogOut = () => {
     dispatch(setOnline(false))
-    dispatch(getUser({}))
+    dispatch(getUser())
     signOut()
   }
   return (
@@ -21,7 +22,7 @@ const Navbar = () => {
     <nav className='border-r-stone-500 h-full flex flex-col'>
         <h2 className='font-sans text-4xl py-6 px-4'> InstaDelicious</h2>
         <ul className='flex flex-col font-mono text-xl gap-4 px-4'>
-            <li><HomeIcon fontSize="large"/> Home</li>
+            <li><Link href="/"> <HomeIcon fontSize="large"/> Home</Link></li>
             <li><SearchIcon fontSize="large"/> Search</li>
             <li><AccountCircleIcon fontSize="large"/>  Profile</li>
         </ul>
