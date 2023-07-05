@@ -20,7 +20,7 @@ const Navbar = () => {
   return (
     <aside className='sticky top-0 left-0'>
     <nav className='border-r-stone-500 h-full flex flex-col'>
-        <h2 className='font-sans text-4xl py-6 px-4'> InstaDelicious</h2>
+        <h2 className='font-sans text-4xl py-6 px-4'> <Link href='/'>InstaDelicious</Link></h2>
         <ul className='flex flex-col font-mono text-xl gap-4 px-4'>
             <li><Link href="/"> <HomeIcon fontSize="large"/> Home</Link></li>
             <li><SearchIcon fontSize="large"/> Search</li>

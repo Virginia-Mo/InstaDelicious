@@ -43,7 +43,6 @@ export default function Home() {
       }
     }
 
-
   useEffect(() => {
     getUsers()
     getConnectedUser(id)

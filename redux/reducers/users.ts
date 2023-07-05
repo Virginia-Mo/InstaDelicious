@@ -12,7 +12,6 @@ interface SliceState {
     followers : UserDB[],
     following : UserDB[],
     online : boolean,  
-    follower : User[]
 };
 
 const initialState : SliceState = {
@@ -23,7 +22,6 @@ const initialState : SliceState = {
     followers : [],
     following : [],
     online : false,
-    follower : []
 };
 
 
@@ -44,18 +42,11 @@ export const userSlice = createSlice({
             state.users = action.payload
         },
         getFollowers : (state, action: PayloadAction) => {
-            console.log("action", action.payload)
-            // if (action.payload === undefined){
-            //     state.followers = []
-            // } else {
-            //     state.followers = []
-                state.followers = action.payload
-            // }
-    },
+            state.followers = action.payload
+        },
         getFollowing : (state, action: PayloadAction) => {
             state.following = action.payload
         },
-
         setOnline : (state, action : PayloadAction<boolean>) => {
             state.online = action.payload
         },
