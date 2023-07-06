@@ -27,3 +27,24 @@ export async function POST(request : Request) {
 
        }
   }
+
+  export async function GET( request : Request) {
+    interface RequestData {
+      id: number
+  }
+  const body : RequestData = await request.json()
+
+        try {
+            const following = await prisma.follower.findUnique({
+              where : {
+                userId : body.id
+            }})
+          
+           return NextResponse.json(following)
+         }
+         catch (error){
+            console.log(error)
+           return  NextResponse.json({message: 'No following found'})
+
+         }
+    }

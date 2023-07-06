@@ -25,10 +25,11 @@ console.log("sdfgh", onlineUser, followed)
 
 export async function MinusFollowing (){
     try {
-        const response = await axios.get('/api/follow/following')
+        const response = await axios.get(`/api/follow/following/${id}`)
         const data = await response.data
 
         if (data) {
+            data.splice..........
             const response = await axios.patch(`/api/follow/following`, 
          {
             superId : followed,
