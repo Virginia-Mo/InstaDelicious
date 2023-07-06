@@ -8,7 +8,7 @@ import CardPost from '@/components/cardPost/cardPost'
 import BadgeAvatars from '@/components/avatar/avatar'
 import { useSession } from 'next-auth/react'
 import { getConnectedUser, getUsers} from '@/async_calls/user/getUser'
-import { getOnlineUserFollower } from '@/redux/reducers/users'
+import { getOnlineUserFollower, getOnlineUserFollowing } from '@/redux/reducers/users'
 import Link from 'next/link'
 
 export default function Home() {
@@ -20,14 +20,17 @@ export default function Home() {
   
   const users  = useAppSelector((state) => state.persistedReducer.user.users)
   
-  const followers  = useAppSelector((state) => state.persistedReducer.user.userFollower)
-  const following  = useAppSelector((state) => state.persistedReducer.user.following)
+  const followers  = useAppSelector((state) => state.persistedReducer.user.onlineUserFollower)
+  const following  = useAppSelector((state) => state.persistedReducer.user.onlineUserFollowing)
 
 
-  const getFollower = (user) => {
+  const getFollow = (onlineUser : UserDB) => {
     let followerArray : UserDB[] = []
-    if (user !== undefined && Object.keys(user).length > 0) {
-    let followerInfo : number[] = user.follow[0].follower_user_id  
+    let followingArray : UserDB[] = []
+
+    if (onlineUser !== undefined && Object.keys(onlineUser).length > 0) {
+    let followerInfo : number[] = onlineUser.follow[0].follower_user_id  
+    let followingInfo : number[] = onlineUser.follow[0].following_user_id  
 
     if (followerInfo.length > 0) {
       followerInfo.forEach((element : number) => {
@@ -37,9 +40,20 @@ export default function Home() {
           followerArray.push(foundPeople)
         }
       })
-      console.log("followerArray", followerArray)
       dispatch(getOnlineUserFollower(followerArray))
         }
+
+        if (followingInfo.length > 0) {
+          console.log("followingInfo", followingInfo)
+          followingInfo.forEach((element : number) => {
+            let foundPeople2 =  users.find((user) => user.id === element)
+    
+            if (foundPeople2){
+              followingArray.push(foundPeople2)
+            }
+          })
+          dispatch(getOnlineUserFollowing(followingArray))
+            }
       }
     }
 
@@ -47,16 +61,19 @@ export default function Home() {
     getUsers()
     getConnectedUser(id)
     console.log("user", user)
-    getFollower(user)
-  }, [id])
+    getFollow(user)
+  }, [])
 
-  const followerPost = followers.map((user) => user.posts)
-  const fArray = followerPost.flat()
-  const sortedArray = fArray.sort((a, b) => b.id - a.id)
+
+  const followingPost = following?.map((user) => user.posts)
+  const fArray = followingPost?.flat()
+  const sortedArray = fArray?.sort((a, b) => b.id - a.id) 
   console.log("sortedArray", sortedArray)
       // let Following = user.follow[0].following_user_id
       
   return (
+    <div>
+{  (user && following) &&   
     <div className='text-black flex w-full gap-10 h-screen justify-between mt-4'>
         <Navbar />
         {user !== null && Object.keys(user).length > 0 &&
@@ -85,6 +102,6 @@ export default function Home() {
             }
           </section></>
         } 
-    </div>
+    </div>}</div>
   )
 }

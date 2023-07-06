@@ -7,7 +7,8 @@ import { UserDB, User } from "@/Types/models"
 interface SliceState {
     user : UserDB,
     onlineUser : UserDB,
-    userFollower : UserDB[],
+    onlineUserFollower : UserDB[],
+    onlineUserFollowing : UserDB[],
     users : UserDB[],
     followers : UserDB[],
     following : UserDB[],
@@ -17,7 +18,8 @@ interface SliceState {
 const initialState : SliceState = {
     user : {} as UserDB,
     onlineUser : {} as UserDB,
-    userFollower : [],
+    onlineUserFollower : [],
+    onlineUserFollowing : [],
     users : [],
     followers : [],
     following : [],
@@ -33,7 +35,10 @@ export const userSlice = createSlice({
             state.onlineUser = action.payload
         },
         getOnlineUserFollower : (state, action: PayloadAction) => {
-            state.userFollower = action.payload
+            state.onlineUserFollower = action.payload
+        },
+        getOnlineUserFollowing : (state, action: PayloadAction) => {
+            state.onlineUserFollowing = action.payload
         },
         getUser : (state, action: PayloadAction) => {
             state.user = action.payload
@@ -61,6 +66,6 @@ export const userSlice = createSlice({
         // })
         }
 })
-export const { getUser, setOnline, getAllUsers, getFollowers, getFollowing, getOnlineUser, getOnlineUserFollower } =  userSlice.actions;
+export const { getUser, setOnline, getAllUsers, getFollowers, getFollowing, getOnlineUser, getOnlineUserFollower, getOnlineUserFollowing} =  userSlice.actions;
 
 export default userSlice; 

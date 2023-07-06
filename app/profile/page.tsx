@@ -6,21 +6,24 @@ import { useAppSelector, useAppDispatch } from '@/Types/reduxTypes'
 import BadgeAvatars from '@/components/avatar/avatar'
 import CardPost from '@/components/cardPost/cardPost'
 import BigAvatars from '@/components/avatar/bigavatar'
-import { getOnlineUserFollower } from '@/redux/reducers/users'
+import { getOnlineUserFollower, getOnlineUserFollowing } from '@/redux/reducers/users'
 export default function Profile ({ params }: { params: { id: number } }) {
 
   const foundUser = useAppSelector((state) => state.persistedReducer.user.onlineUser)
-  const followers = useAppSelector((state) => state.persistedReducer.user.userFollower)
+  const followers  = useAppSelector((state) => state.persistedReducer.user.onlineUserFollower)
+  const following  = useAppSelector((state) => state.persistedReducer.user.onlineUserFollowing)
   
   const users  = useAppSelector((state) => state.persistedReducer.user.users)
   
 
   const dispatch = useAppDispatch()
-
-  const getFollower = (user) => {
+  const getFollow = (onlineUser : UserDB) => {
     let followerArray : UserDB[] = []
-    if (user !== undefined && Object.keys(user).length > 0) {
-    let followerInfo : number[] = user.follow[0].follower_user_id  
+    let followingArray : UserDB[] = []
+
+    if (onlineUser !== undefined && Object.keys(onlineUser).length > 0) {
+    let followerInfo : number[] = onlineUser.follow[0].follower_user_id  
+    let followingInfo : number[] = onlineUser.follow[0].following_user_id  
 
     if (followerInfo.length > 0) {
       followerInfo.forEach((element : number) => {
@@ -30,14 +33,25 @@ export default function Profile ({ params }: { params: { id: number } }) {
           followerArray.push(foundPeople)
         }
       })
-      console.log("followerArray", followerArray)
       dispatch(getOnlineUserFollower(followerArray))
         }
+
+        if (followingInfo.length > 0) {
+          console.log("followingInfo", followingInfo)
+          followingInfo.forEach((element : number) => {
+            let foundPeople2 =  users.find((user) => user.id === element)
+    
+            if (foundPeople2){
+              followingArray.push(foundPeople2)
+            }
+          })
+          dispatch(getOnlineUserFollowing(followingArray))
+            }
       }
     }
 
     useEffect(() => {
-        getFollower(foundUser)
+        getFollow(foundUser)
       }, [foundUser])
 
 
@@ -62,7 +76,14 @@ export default function Profile ({ params }: { params: { id: number } }) {
             followers === undefined &&
             <p> <span className='font-bold'> 0</span> follower</p>
            }
-            <p>1022 following</p> 
+ {
+              following !== undefined && 
+              <p> <span className='font-bold'> {following.length}</span> following</p>
+            }
+           {
+            following === undefined &&
+            <p> <span className='font-bold'> 0</span> following</p>
+           }
           </div>
           </div>
           </section>

@@ -28,11 +28,21 @@ import { UserDB } from '@/Types/models'
 import BigAvatars from '@/components/avatar/bigavatar'
 import { getFollowers, getFollowing } from '@/redux/reducers/users'
 import { set } from 'react-hook-form';
+import { AddFollower, AddFollowing, MinusFollowing } from '@/async_calls/follower';
+import AddIcon from '@mui/icons-material/Add';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+
+
 export default function Profile ({ params }: { params: { id: number } }) {
 
   const users = useAppSelector((state) => state.persistedReducer.user.users)
   const followers = useAppSelector((state) => state.persistedReducer.user.followers)
   const following = useAppSelector((state) => state.persistedReducer.user.following)
+  const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
+  const onlineUserfollowing  = useAppSelector((state) => state.persistedReducer.user.onlineUserFollowing)
+
+  const userFollowing = user.follow[0].following_user_id
+
   const id = +params.id
   const foundUser = users.find((user) => user.id === id)
 
@@ -92,6 +102,7 @@ if (foundUser){
   console.log("followers2", followers)
 }
 }, [])
+
 const [open, setOpen] = React.useState(false);
 const [selectedPost, setselectedPost] = React.useState('' as any)
 const [selectedImg, setSelectedImg] = React.useState('')
@@ -108,7 +119,12 @@ const handleClose = () => {
   setOpen(false);
 
 };
-
+const addOneFollower = () => {
+  AddFollowing(foundUser?.id, user.id)
+}
+const removeFollow = () => {
+  MinusFollowing(foundUser?.id, user.id)
+}
   return (
     <div className='flex h-screen'>
      <Navbar />
@@ -119,7 +135,16 @@ const handleClose = () => {
           <BigAvatars user={foundUser} />
         </div> 
         <div className='flex flex-col justify-evenly'>
+          <div className='flex gap-8'>
           <p> <span className='font-bold'> {foundUser?.username}</span></p>
+          {
+            (!onlineUserfollowing.includes(foundUser?.id)) && 
+            <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
+          }
+          { 
+           (onlineUserfollowing.includes(foundUser?.id)) &&
+            <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>}
+            </div>
           <div className='flex gap-5 mb-10'>
             <p> <span className='font-bold'>{foundUser?.posts.length} </span> posts</p>
             {
@@ -148,7 +173,7 @@ const handleClose = () => {
        </article>
 </>))}       <Modal
           open={open}
-          onClose={handleClose}
+          onClose={handleClose} 
           // aria-labelledby="modal-modal-title"
           // aria-describedby="modal-modal-description"
         ><Box sx={style} className="flex">
