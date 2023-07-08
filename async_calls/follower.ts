@@ -22,7 +22,8 @@ console.log("sdfgh", onlineUser, followed)
         return error
     }
   }
-
+// test
+const test
 export async function MinusFollowing (){
     try {
         const response = await axios.get(`/api/follow/following/${id}`)
