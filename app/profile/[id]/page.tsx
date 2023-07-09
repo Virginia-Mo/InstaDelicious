@@ -31,6 +31,7 @@ import { set } from 'react-hook-form';
 import { AddFollower, AddFollowing, MinusFollowing } from '@/async_calls/follower';
 import AddIcon from '@mui/icons-material/Add';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import { getConnectedUser } from '@/async_calls/user/getUser';
 
 
 export default function Profile ({ params }: { params: { id: number } }) {
@@ -101,7 +102,7 @@ if (foundUser){
   getUserFollower(foundUser)
   console.log("followers2", followers)
 }
-}, [])
+}, [user])
 
 const [open, setOpen] = React.useState(false);
 const [selectedPost, setselectedPost] = React.useState('' as any)
@@ -119,11 +120,17 @@ const handleClose = () => {
   setOpen(false);
 
 };
-const addOneFollower = () => {
-  AddFollowing(foundUser?.id, user.id)
+const addOneFollower = async() => {
+ const response : Response  =  await AddFollowing(foundUser?.id, user.id)
+ if (response.status === 200) {
+  getUserFollower(foundUser)
+
+  console.log("response", user)
+  }
 }
 const removeFollow = () => {
   MinusFollowing(foundUser?.id, user.id)
+  console.log("unfollow", user)
 }
   return (
     <div className='flex h-screen'>

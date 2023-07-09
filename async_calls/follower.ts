@@ -7,7 +7,7 @@ import { getConnectedUser } from './user/getUser'
 import { get } from 'http'
 
 
-export async function AddFollowing ( followed : number, onlineUser : number,) {
+export async function AddFollowing ( followed : number, onlineUser : number) {
 console.log("sdfgh", onlineUser, followed)
     try {
         const response = await axios.post(`/api/follow/following`, 
@@ -15,37 +15,28 @@ console.log("sdfgh", onlineUser, followed)
             superId : followed,
             userId : onlineUser
         })
-        if (response.status === 200) {
-            getConnectedUser(onlineUser)
-            }
+        return new Response(JSON.stringify({message : 'followed'}))
+
     } catch (error) {
         return error
     }
   }
-
-export async function MinusFollowing (){
-    try {
-        const response = await axios.get(`/api/follow/following/${id}`)
-        const data = await response.data
-
-        if (data) {
-            data.splice..........
+  export async function MinusFollowing ( followed : number, onlineUser : number) {
+    console.log("sdfgh", onlineUser, followed)
+    
+        try {
             const response = await axios.patch(`/api/follow/following`, 
-         {
-            superId : followed,
-            userId : onlineUser
-        })
-        if (response.status === 200) {
-            getConnectedUser(onlineUser)
-            }
-
-        if (data) {
-            store.dispatch(getAllUsers(data))
-        return data}
-    } catch (error) {
-        return error
-    }
-  }
+             {
+                superId : followed,
+                userId : onlineUser
+            })
+            if (response.status === 200) {
+                getConnectedUser(onlineUser)
+                }
+        } catch (error) {
+            return error
+        }
+      }
 
 
   export async function addFollowing (id: number) {

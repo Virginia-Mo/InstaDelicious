@@ -6,6 +6,7 @@ interface RequestData {
 }
 export async function GET(request : Request,  { params }: { params: { id: string }}) {
         try {
+          
             const following = await prisma.follower.findUnique({
               where : {
                 userId :  +params.id
@@ -19,3 +20,4 @@ export async function GET(request : Request,  { params }: { params: { id: string
 
          }
     }
+
