@@ -9,6 +9,7 @@ import { getConnectedUser } from '@/async_calls/user/getUser';
 
 import Navbar from '@/components/navBar/Navbar'
 import CardPost from '@/components/cardPost/cardPost'
+import BigAvatars from '@/components/avatar/bigavatar'
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -48,10 +49,13 @@ export default function Profile ({ params }: { params: { id: number } }) {
   const [selectedImg, setSelectedImg] = React.useState('')
   const [openFollow, setOpenFollow] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [openFollow2, setOpenFollow2] = React.useState(false);
+  const [anchorEl2, setAnchorEl2] = React.useState<null | HTMLElement>(null);
 
   const userFollowing = user.follow[0].following_user_id
   const id = +params.id
   const foundUser = users.find((user) => user.id === id)
+console.log("foundUser", followers)
 
   function getUserFollower (userInf : UserDB)  {
     console.log("GO", userInf)
@@ -126,9 +130,16 @@ const handleClick = (event: React.MouseEvent<HTMLElement>) => {
   setAnchorEl(event.currentTarget);
   setOpenFollow((previousOpenFollow) => !previousOpenFollow);
 };
-
+const handleClick2 = (event: React.MouseEvent<HTMLElement>) => {
+  setAnchorEl2(event.currentTarget);
+  setOpenFollow2((previousOpenFollow) => !previousOpenFollow);
+};
 const canBeOpenFollow = openFollow && Boolean(anchorEl);
 const id2 = canBeOpenFollow ? 'transition-popper' : undefined;
+
+const canBeOpenFollow2 = openFollow2 && Boolean(anchorEl2);
+const id22 = canBeOpenFollow2 ? 'transition-popper' : undefined;
+
 
 const addOneFollower = async() => {
  const response : Response  =  await AddFollowing(foundUser?.id, user.id)
@@ -154,11 +165,11 @@ const removeFollow = () => {
           <div className='flex gap-8'>
           <p> <span className='font-bold'> {foundUser?.username}</span></p>
           {
-            (!onlineUserfollowing.includes(foundUser?.id)) && 
+            (onlineUserfollowing.includes(foundUser?.id)) && 
             <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
           }
           { 
-           (onlineUserfollowing.includes(foundUser?.id)) &&
+           (!onlineUserfollowing.includes(foundUser?.id)) &&
             <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>}
             </div>
           <div className='flex gap-5 mb-10'>
@@ -173,17 +184,17 @@ const removeFollow = () => {
                         <h2>Following</h2>
                           {followers.map((foundFollow) => (
                             <>
-                              <Link href={`/profile/${foundFollow.id}`}>
-                                <BadgeAvatars user={user} />
-                                <p key={user.id}>{user.username}</p>
+                              <Link href={`/profile/${foundFollow.id}`} key={foundFollow.id}>
+                                <BadgeAvatars user={foundFollow} />
+                                <p >{foundFollow.username}</p>  </Link>
                                 {
-                                  (onlineUserfollowing.includes(foundFollow?.id)) &&
+                                  (!onlineUserfollowing.includes(foundFollow?.id)) &&
                                   <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
-                                  (!onlineUserFollowing.includes(foundUser?.id)&& 
-                                  <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
-                                  )
                                 }
-                              </Link>
+                                {(onlineUserfollowing.includes(foundFollow?.id)&& 
+                                <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
+                                )}
+                            
                             </>))}
                         </Box>
                       </Fade>
@@ -196,22 +207,24 @@ const removeFollow = () => {
            }
             {
               following !== undefined && 
-              <><p aria-describedby={id2} onClick={handleClick}> <span className='font-bold'> {following.length}</span> following</p><Popper id={id} open={openFollow} anchorEl={anchorEl} transition>
+              <><p aria-describedby={id22} onClick={handleClick2}> <span className='font-bold'> {following.length}</span> following</p>
+              <Popper id={id22} open={openFollow2} anchorEl={anchorEl2} transition>
                     {({ TransitionProps }) => (
                       <Fade {...TransitionProps} timeout={350}>
                         <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
                           <h2>Following</h2>
                           {following.map((foundFollow) => (
                             <>
-                              <Link href={`/profile/${foundFollow.id}`}>
-                                <BadgeAvatars user={user} />
-                                <p key={user.id}>{user.username}</p>
-                                {(onlineUserfollowing.includes(foundFollow?.id)) &&
-                                  <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>}
-                                (!onlineUserFollowing.includes(foundUser?.id)&&
+                              <Link href={`/profile/${foundFollow.id}`} key={foundFollow.id}>
+                                <BadgeAvatars user={foundFollow} />
+                                <p >{foundFollow.username}</p>
+                                {(!onlineUserfollowing.includes(foundFollow?.id)) &&
+                                  <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
+                                  }
+{                                (onlineUserfollowing.includes(foundFollow?.id)&&
                                 <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
-                                )
-                                }
+                                )}
+                                
                               </Link>
                             </>))}
                         </Box>
