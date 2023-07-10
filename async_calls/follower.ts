@@ -21,35 +21,20 @@ console.log("sdfgh", onlineUser, followed)
         return error
     }
   }
-<<<<<<< HEAD
   export async function MinusFollowing ( followed : number, onlineUser : number) {
     console.log("sdfgh", onlineUser, followed)
-    
         try {
-=======
-// test
-const test
-export async function MinusFollowing (){
-    try {
-        const response = await axios.get(`/api/follow/following/${id}`)
-        const data = await response.data
-
-        if (data) {
-            data.splice..........
->>>>>>> e64eae482a9e990305df1fc07d935c2e98e09652
             const response = await axios.patch(`/api/follow/following`, 
              {
                 superId : followed,
                 userId : onlineUser
             })
-            if (response.status === 200) {
-                getConnectedUser(onlineUser)
-                }
+            return new Response(JSON.stringify({message : 'followed'}))
+    
         } catch (error) {
             return error
         }
       }
-
 
   export async function addFollowing (id: number) {
     try {
