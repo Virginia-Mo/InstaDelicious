@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 
 export async function POST(request : Request) {
     const body = await request.json()
+    
         try {
             const response = await prisma.follower.update({
                 where : {
@@ -15,8 +16,20 @@ export async function POST(request : Request) {
                   }
             }
           })
+          if (response){
+            const response2 = await prisma.follower.update({
+              where : {
+                userId: +body.superId
+              },
+              data : {
+                follower_user_id : {
+                  push : +body.userId
+                }
+          }
+        })
+          }
           
-           return NextResponse.json(response)
+           return NextResponse.json({message : "Following completed"})
          
         }
          catch (error){
@@ -48,12 +61,35 @@ export async function PATCH(request : Request) {
                   following_user_id : {
                     set : followingArray
                   }
-            }
+                }
+            })
+          }
+          const followArray2 = await prisma.follower.findUnique({
+            where : {
+              userId :  +body.superId
+          }})
+
+          let followingArray2 : number[] = followArray2?.follower_user_id
+
+          if (followingArray2.length > 0 && followingArray2.includes(+body.userId)) {
+            followingArray2 = followingArray2.filter((id) => id !== +body.userId)
+
+            const response2 = await prisma.follower.update({
+              where : {
+                userId: +body.superId
+              },
+              data : {
+                follower_user_id : {
+                  set : followingArray2
+                }
+              }
           })
-          return NextResponse.json(response) }
+          }
+
+          return NextResponse.json({message : "task completed"}) 
           } catch (error) {
               console.log(error)
-             return  NextResponse.json({message: 'Unable to create post'})
+             return  NextResponse.json({message: 'Unable to create follow'})
     
            }
       }

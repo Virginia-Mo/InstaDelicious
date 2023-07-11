@@ -44,6 +44,24 @@ export async function POST(req: Request) {
             throw new Error('Unable to create user')
         }  
 
+        const newUser = await prisma.user.findUnique({
+            where : {
+                email : body.email
+            }
+        })
+
+        if (newUser){
+            const followTable = await prisma.follower.create({
+                data: {
+                    userId : newUser.id
+            }
+            })
+
+        }
+
+        if (!user) {
+            throw new Error('Unable to create user')
+        }  
         return NextResponse.json({message : 'Your account has been created successfully, you can now login ! '})
     }
     catch (error){

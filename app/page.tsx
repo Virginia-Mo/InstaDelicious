@@ -14,6 +14,7 @@ import { fetchUser } from '@/redux/middlewares/users'
 export default function FirstPage() {
 const dispatch = useAppDispatch()
     const { data: session } = useSession()
+    console.log(session)
     // if (session) {
     //   dispatch(setOnline(true))
     //   dispatch(fetchUser(session.user.userData.id))
