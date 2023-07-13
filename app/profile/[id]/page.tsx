@@ -161,7 +161,7 @@ const canBeOpenFollow2 = openFollow2 && Boolean(anchorEl2) && !openFollow;
 const id22 = canBeOpenFollow2 ? 'transition-popper' : undefined;
 
 
-const editFollow = async(bool, res) => {
+const editFollow = async(bool : boolean, res : Response) => {
   if (res.status === 200){
     setFollowing(bool)
      const usersCall  = await getUsers()
