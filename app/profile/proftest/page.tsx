@@ -2,13 +2,15 @@
 
 import React, { useEffect } from 'react'
 import { useAppSelector, useAppDispatch } from '@/Types/reduxTypes'
-import { Post, UserDB } from '@/Types/models'
-import { getFollowers, getFollowing } from '@/redux/reducers/users'
-import { AddFollowing, MinusFollowing } from '@/async_calls/follower';
+import { UserDB } from '@/Types/models'
+import { getFollowers, getFollowing, getOnlineUserFollower, getOnlineUserFollowing, getUser } from '@/redux/reducers/users'
+import { AddFollower, AddFollowing, MinusFollowing } from '@/async_calls/follower';
 import { getConnectedUser, getUsers } from '@/async_calls/user/getUser';
 import { GetFollow } from '@/components/utils/follow'
+import { useRouter } from 'next/router';
 
 import Navbar from '@/components/navBar/Navbar'
+import CardPost from '@/components/cardPost/cardPost'
 import BigAvatars from '@/components/avatar/bigavatar'
 
 import Box from '@mui/material/Box';
@@ -20,7 +22,7 @@ import Fade from '@mui/material/Fade';
 import Link from 'next/link';
 import BadgeAvatars from '@/components/avatar/avatar';
 import AddIcon from '@mui/icons-material/Add';
-import PersonIcon from '@mui/icons-material/Person';
+import Router from 'next/router';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -57,7 +59,7 @@ export default function Profile ({ params }: { params: { id: number } }) {
 
 
   const id = +params.id
-  let foundUser  = users.find((user) => user.id === id)
+  let foundUser = users.find((user) => user.id === id)
 
   
   function getUserFollower (userInf : UserDB)  {
@@ -122,17 +124,7 @@ let tryit = onlineUserFollowing.some((item)=> item.id === foundUser?.id)
   }
   }, [user])
 
-  // useEffect(() => {
-  //   const follow =  GetFollow(user, users)
-  //   if (follow){
-  //   console.log("folllll", follow)
-  //   }
-
-  //   }, [user]) 
-
-
-
-const handleOpen = (post : Post) => {
+const handleOpen = (post) => {
   setSelectedImg('')
   setselectedPost('')
   console.log("open", post)
@@ -161,27 +153,50 @@ const canBeOpenFollow2 = openFollow2 && Boolean(anchorEl2) && !openFollow;
 const id22 = canBeOpenFollow2 ? 'transition-popper' : undefined;
 
 
-const editFollow = async(bool, res) => {
-  if (res.status === 200){
-    setFollowing(bool)
-     const usersCall  = await getUsers()
-     console.log("CALL2", usersCall)
-     if (usersCall.length >0 ){
-       foundUser = usersCall.find((user : UserDB) => user.id === id)
-       console.log("newuser", foundUser)
-        getUserFollower(foundUser)
-     }
-   } }
 
-const addOneFollower = async() => {
-  const response : Response  =  await AddFollowing(foundUser?.id, user.id)
-  editFollow(true, response)
+  const addOneFollower = async() => {
+    const response : Response  =  await AddFollowing(foundUser?.id, user.id)
+    if (response.status === 200){
+      setFollowing(true)
+      const usersCall = await getUsers()
+      console.log("CALL", usersCall)
+      if (usersCall.length > 0){
+       let foundUser2 = usersCall.find((user) => user.id === id)
+        console.log("ééééééé", foundUser)
+         getUserFollower(foundUser2)
+         console.log("its followers", followers)
+      }
+    //     const rep = GetFollow(user, users)
+    //     if (rep){
+    //       console.log("rep", rep.followerUser)
+    //       dispatch(getOnlineUserFollower(rep.followerUser))
+    //       dispatch(getOnlineUserFollowing(rep.followingUser))
+
+    // }
+    // if (response.status === 200) {
+    //   }}
+  }
 }
 const removeFollow = async() => {
   const response : Response  =  await MinusFollowing(foundUser?.id, user.id)
-    editFollow(false, response)
-}
+  if (response.status === 200){
+    setFollowing(false)
+     const usersCall  = await getUsers()
+     console.log("CALL2", usersCall)
+     if (usersCall.length >0 ){
+       foundUser = usersCall.find((user) => user.id === id)
+       console.log("newuser", foundUser)
+        getUserFollower(foundUser)
+     }
+  //     const rep = GetFollow(user, users)
+  //     if (rep){
+  //       console.log("rep", rep.followerUser)
+  //       dispatch(getOnlineUserFollower(rep.followerUser))
+  //       dispatch(getOnlineUserFollowing(rep.followingUser))
 
+  // }
+}
+}
   return (
     <div className='flex h-screen'>
      <Navbar />
@@ -194,15 +209,7 @@ const removeFollow = async() => {
         <div className='flex flex-col justify-evenly'>
           <div className='flex gap-8'>
           <p> <span className='font-bold'> {foundUser?.username}</span></p>
-          { (foundUser?.id === user.id) &&
-          <div>
-         <Button variant="outlined" startIcon={<PersonIcon />}>Edit profile</Button>
-
-          </div>
-}
-{
-    (foundUser?.id !== user.id) && <div>
-                  {
+          {
             followings && 
             <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
           }
@@ -210,9 +217,6 @@ const removeFollow = async() => {
            !followings &&
             <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
             }
-    </div>
-}
-
             </div>
           <div className='flex gap-5 mb-10'>
             <p> <span className='font-bold'>{foundUser?.posts.length} </span> posts</p>
@@ -233,10 +237,10 @@ const removeFollow = async() => {
                                   (foundFollow.id === user.id) && <></>
                                 }
                                 {
-                                  (!onlineUserFollowing.includes(foundFollow?.id)  && foundFollow.id !== user.id) &&
+                                  (onlineUserFollowing.includes(foundFollow?.id)) &&
                                   <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
                                 }
-                                {(onlineUserFollowing.includes(foundFollow?.id) && foundFollow.id !== user.id) && 
+                                {(!onlineUserFollowing.includes(foundFollow?.id) && foundFollow.id !== user.id) && 
                                 <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
                                 }
                             
@@ -263,18 +267,17 @@ const removeFollow = async() => {
                               <Link href={`/profile/${foundFollow.id}`} key={foundFollow.id}>
                                 <BadgeAvatars user={foundFollow} />
                                 <p >{foundFollow.username}</p>
-
                                 {
                                   (foundFollow.id === user.id) && <></>
                                 }
                                 {
-                                (!onlineUserFollowing.includes(foundFollow?.id)  && foundFollow.id !== user.id) &&
+                                (onlineUserFollowing.includes(foundFollow?.id)) &&
                                   <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
                                 }
                               {
-                              (onlineUserFollowing.includes(foundFollow?.id) && foundFollow.id !== user.id) &&
+                              (!onlineUserFollowing.includes(foundFollow?.id) && foundFollow.id !== user.id) &&
                                 <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
-                                }                                    
+                                }
                                 
                               </Link>
                             </>))}
