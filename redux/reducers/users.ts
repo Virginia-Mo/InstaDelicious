@@ -35,6 +35,7 @@ export const userSlice = createSlice({
             state.onlineUser = action.payload
         },
         getOnlineUserFollower : (state, action: PayloadAction) => {
+            console.log("gfghb", action.payload)
             state.onlineUserFollower = action.payload
         },
         getOnlineUserFollowing : (state, action: PayloadAction) => {
@@ -47,7 +48,9 @@ export const userSlice = createSlice({
             state.users = action.payload
         },
         getFollowers : (state, action: PayloadAction) => {
+            console.log("here followers", action.payload)
             state.followers = action.payload
+            console.log(state.followers)
         },
         getFollowing : (state, action: PayloadAction) => {
             state.following = action.payload

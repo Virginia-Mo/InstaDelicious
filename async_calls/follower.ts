@@ -22,7 +22,7 @@ console.log("sdfgh", onlineUser, followed)
     }
   }
   export async function MinusFollowing ( followed : number, onlineUser : number) {
-    console.log("sdfgh", onlineUser, followed)
+    console.log("patch")
         try {
             const response = await axios.patch(`/api/follow/following`, 
              {
@@ -36,25 +36,25 @@ console.log("sdfgh", onlineUser, followed)
         }
       }
 
-  export async function addFollowing (id: number) {
-    try {
-        const response = await axios.get(`/api/users/${id}`)
-        const data = await response.data
-        store.dispatch(getOnlineUser(data))
-        return data
-    } catch (error) {
-        return error
-    }
-  }
+//   export async function addFollowing (id: number) {
+//     try {
+//         const response = await axios.get(`/api/users/${id}`)
+//         const data = await response.data
+//         store.dispatch(getOnlineUser(data))
+//         return data
+//     } catch (error) {
+//         return error
+//     }
+//   }
 
-export async function minusFollowing (){
-    try {
-        const response = await axios.get('/api/users')
-        const data = await response.data
-        if (data) {
-            store.dispatch(getAllUsers(data))
-        return data}
-    } catch (error) {
-        return error
-    }
-  }
+// export async function minusFollowing (){
+//     try {
+//         const response = await axios.get('/api/users')
+//         const data = await response.data
+//         if (data) {
+//             store.dispatch(getAllUsers(data))
+//         return data}
+//     } catch (error) {
+//         return error
+//     }
+//   }

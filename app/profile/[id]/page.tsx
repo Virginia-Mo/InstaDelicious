@@ -3,9 +3,11 @@
 import React, { useEffect } from 'react'
 import { useAppSelector, useAppDispatch } from '@/Types/reduxTypes'
 import { UserDB } from '@/Types/models'
-import { getFollowers, getFollowing } from '@/redux/reducers/users'
+import { getFollowers, getFollowing, getOnlineUserFollower, getOnlineUserFollowing, getUser } from '@/redux/reducers/users'
 import { AddFollower, AddFollowing, MinusFollowing } from '@/async_calls/follower';
-import { getConnectedUser } from '@/async_calls/user/getUser';
+import { getConnectedUser, getUsers } from '@/async_calls/user/getUser';
+import { GetFollow } from '@/components/utils/follow'
+import { useRouter } from 'next/router';
 
 import Navbar from '@/components/navBar/Navbar'
 import CardPost from '@/components/cardPost/cardPost'
@@ -20,6 +22,7 @@ import Fade from '@mui/material/Fade';
 import Link from 'next/link';
 import BadgeAvatars from '@/components/avatar/avatar';
 import AddIcon from '@mui/icons-material/Add';
+import Router from 'next/router';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -42,7 +45,7 @@ export default function Profile ({ params }: { params: { id: number } }) {
   const followers = useAppSelector((state) => state.persistedReducer.user.followers)
   const following = useAppSelector((state) => state.persistedReducer.user.following)
   const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
-  const onlineUserfollowing  = useAppSelector((state) => state.persistedReducer.user.onlineUserFollowing)
+  const onlineUserFollowing  = useAppSelector((state) => state.persistedReducer.user.onlineUserFollowing)
   
   const [open, setOpen] = React.useState(false);
   const [selectedPost, setselectedPost] = React.useState('' as any)
@@ -51,64 +54,73 @@ export default function Profile ({ params }: { params: { id: number } }) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [openFollow2, setOpenFollow2] = React.useState(false);
   const [anchorEl2, setAnchorEl2] = React.useState<null | HTMLElement>(null);
+  const [follow, setFollow] = React.useState(false);
+  const [followings, setFollowing] = React.useState(true);
 
-  const userFollowing = user.follow[0].following_user_id
+
   const id = +params.id
-  const foundUser = users.find((user) => user.id === id)
-console.log("foundUser", followers)
+  let foundUser = users.find((user) => user.id === id)
 
+  
   function getUserFollower (userInf : UserDB)  {
     console.log("GO", userInf)
         let followerArray : UserDB[] = []
         let followingArray : UserDB[] = []
-
+console.log("userInf", userInf)
         if (userInf !== undefined) {
           if (userInf.follow.length === 0) {
             console.log("empty")
             dispatch(getFollowers())
             dispatch(getFollowing())
           } else {
-console.log("not empty")
+        console.log("qsdf", userInf.follow[0].follower_user_id)
         let followerInfo : number[] = userInf.follow[0].follower_user_id  
         let followingInfo : number[] = userInf.follow[0].following_user_id
-    
-        if (followingInfo.length > 0) {
-          followerInfo.forEach((element : number) => {
+
+    console.log("ici",followerInfo , "la")
+        if (userInf.follow[0].follower_user_id.length > 0) {
+          userInf.follow[0].follower_user_id.forEach((element : number) => {
             let foundPeople =  users.find((user) => user.id === element)
-    
+            
             if (foundPeople){
               followerArray.push(foundPeople)
             }
           })
-          console.log("ARRAY", followerArray)
+          console.log("there", followerArray)
           dispatch(getFollowers(followerArray))
-
         } else {
           dispatch(getFollowers())
         }
-
-        if (followingInfo.length > 0) {
-            console.log("followingInfo", followingInfo)
-            followingInfo.forEach((element : number) => {
+        if (userInf.follow[0].following_user_id.length > 0) {
+          userInf.follow[0].following_user_id.forEach((element : number) => {
           let foundPeople2 =  users.find((user) => user.id === element)
       
           if (foundPeople2){
                 followingArray.push(foundPeople2)
               }
             })
-            console.log("ARRAY", followingArray)
             dispatch(getFollowing(followingArray))
-  
           } else {
             dispatch(getFollowing())
              }
           }}
         }
+
+useEffect(() => {
+let tryit = onlineUserFollowing.some((item)=> item.id === foundUser?.id)
+console.log("tryyyyyy", tryit)
+  if (tryit){
+    setFollowing(true)
+  } else {
+    setFollowing(false)
+  }
+  console.log("followingggg", followings)
+},[])
+
   useEffect(() => {
   if (foundUser){
-    console.log("foundUser", foundUser)
+    console.log("useeffect")
     getUserFollower(foundUser)
-    console.log("followers2", followers)
   }
   }, [user])
 
@@ -134,23 +146,56 @@ const handleClick2 = (event: React.MouseEvent<HTMLElement>) => {
   setAnchorEl2(event.currentTarget);
   setOpenFollow2((previousOpenFollow) => !previousOpenFollow);
 };
-const canBeOpenFollow = openFollow && Boolean(anchorEl);
+const canBeOpenFollow = openFollow && Boolean(anchorEl) && !openFollow2;
 const id2 = canBeOpenFollow ? 'transition-popper' : undefined;
 
-const canBeOpenFollow2 = openFollow2 && Boolean(anchorEl2);
+const canBeOpenFollow2 = openFollow2 && Boolean(anchorEl2) && !openFollow;
 const id22 = canBeOpenFollow2 ? 'transition-popper' : undefined;
 
 
-const addOneFollower = async() => {
- const response : Response  =  await AddFollowing(foundUser?.id, user.id)
- if (response.status === 200) {
-  getUserFollower(foundUser)
-  console.log("response", user)
+
+  const addOneFollower = async() => {
+    const response : Response  =  await AddFollowing(foundUser?.id, user.id)
+    if (response.status === 200){
+      setFollowing(true)
+      const usersCall = await getUsers()
+      console.log("CALL", usersCall)
+      if (usersCall.length > 0){
+       let foundUser2 = usersCall.find((user) => user.id === id)
+        console.log("ééééééé", foundUser)
+         getUserFollower(foundUser2)
+         console.log("its followers", followers)
+      }
+    //     const rep = GetFollow(user, users)
+    //     if (rep){
+    //       console.log("rep", rep.followerUser)
+    //       dispatch(getOnlineUserFollower(rep.followerUser))
+    //       dispatch(getOnlineUserFollowing(rep.followingUser))
+
+    // }
+    // if (response.status === 200) {
+    //   }}
   }
 }
-const removeFollow = () => {
-  MinusFollowing(foundUser?.id, user.id)
-  console.log("unfollow", user)
+const removeFollow = async() => {
+  const response : Response  =  await MinusFollowing(foundUser?.id, user.id)
+  if (response.status === 200){
+    setFollowing(false)
+     const usersCall  = await getUsers()
+     console.log("CALL2", usersCall)
+     if (usersCall.length >0 ){
+       foundUser = usersCall.find((user) => user.id === id)
+       console.log("newuser", foundUser)
+        getUserFollower(foundUser)
+     }
+  //     const rep = GetFollow(user, users)
+  //     if (rep){
+  //       console.log("rep", rep.followerUser)
+  //       dispatch(getOnlineUserFollower(rep.followerUser))
+  //       dispatch(getOnlineUserFollowing(rep.followingUser))
+
+  // }
+}
 }
   return (
     <div className='flex h-screen'>
@@ -165,12 +210,13 @@ const removeFollow = () => {
           <div className='flex gap-8'>
           <p> <span className='font-bold'> {foundUser?.username}</span></p>
           {
-            (onlineUserfollowing.includes(foundUser?.id)) && 
+            followings && 
             <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
           }
           { 
-           (!onlineUserfollowing.includes(foundUser?.id)) &&
-            <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>}
+           !followings &&
+            <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
+            }
             </div>
           <div className='flex gap-5 mb-10'>
             <p> <span className='font-bold'>{foundUser?.posts.length} </span> posts</p>
@@ -188,12 +234,15 @@ const removeFollow = () => {
                                 <BadgeAvatars user={foundFollow} />
                                 <p >{foundFollow.username}</p>  </Link>
                                 {
-                                  (!onlineUserfollowing.includes(foundFollow?.id)) &&
+                                  (foundFollow.id === user.id) && <></>
+                                }
+                                {
+                                  (onlineUserFollowing.includes(foundFollow?.id)) &&
                                   <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
                                 }
-                                {(onlineUserfollowing.includes(foundFollow?.id)&& 
+                                {(!onlineUserFollowing.includes(foundFollow?.id) && foundFollow.id !== user.id) && 
                                 <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
-                                )}
+                                }
                             
                             </>))}
                         </Box>
@@ -218,12 +267,17 @@ const removeFollow = () => {
                               <Link href={`/profile/${foundFollow.id}`} key={foundFollow.id}>
                                 <BadgeAvatars user={foundFollow} />
                                 <p >{foundFollow.username}</p>
-                                {(!onlineUserfollowing.includes(foundFollow?.id)) &&
+                                {
+                                  (foundFollow.id === user.id) && <></>
+                                }
+                                {
+                                (onlineUserFollowing.includes(foundFollow?.id)) &&
                                   <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
-                                  }
-{                                (onlineUserfollowing.includes(foundFollow?.id)&&
+                                }
+                              {
+                              (!onlineUserFollowing.includes(foundFollow?.id) && foundFollow.id !== user.id) &&
                                 <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
-                                )}
+                                }
                                 
                               </Link>
                             </>))}
@@ -233,7 +287,7 @@ const removeFollow = () => {
                   </Popper></>
             }
            {
-            followers === undefined &&
+            following === undefined &&
             <p> <span className='font-bold'> 0</span> following</p>
            }
           </div>
