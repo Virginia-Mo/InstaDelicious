@@ -26,8 +26,10 @@ export default function SettingsMenu() {
         setOpenSetting(false)
     }
   return (
+    <div>
+       <h1 className='text-center pb-6 text-2xl'>Edit your personal infos</h1>
     <div className='flex border-gray-200 border-2 rounded-lg'>
-    <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+    <Box className="bg-red-50">
       <nav aria-label="main mailbox folders">
         <List>
           <ListItem disablePadding>
@@ -36,7 +38,6 @@ export default function SettingsMenu() {
                 <PersonIcon />
               </ListItemIcon>
               <p onClick={handleOpenSetting}> <ListItemText primary="Profile"  /></p>
-             
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
@@ -45,16 +46,17 @@ export default function SettingsMenu() {
                 <SettingsIcon />
               </ListItemIcon>
               <p onClick={handleCloseSetting}>  <ListItemText primary="Settings" /></p>
-            
             </ListItemButton>
           </ListItem>
         </List>
       </nav>
     </Box>
+   
     { openSetting && <SettingForm />}
     {!openSetting &&   <SettingsInfosForm />}
     
   
+    </div>
     </div>
   )
 }

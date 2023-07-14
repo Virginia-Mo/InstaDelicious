@@ -70,10 +70,8 @@ export default function Profile ({ params }: { params: { id: number } }) {
     console.log("GO", userInf)
         let followerArray : UserDB[] = []
         let followingArray : UserDB[] = []
-console.log("userInf", userInf)
         if (userInf !== undefined) {
           if (userInf.follow.length === 0) {
-            console.log("empty")
             dispatch(getFollowers())
             dispatch(getFollowing())
           } else {
@@ -90,7 +88,6 @@ console.log("userInf", userInf)
               followerArray.push(foundPeople)
             }
           })
-          console.log("there", followerArray)
           dispatch(getFollowers(followerArray))
         } else {
           dispatch(getFollowers())
@@ -98,7 +95,6 @@ console.log("userInf", userInf)
         if (userInf.follow[0].following_user_id.length > 0) {
           userInf.follow[0].following_user_id.forEach((element : number) => {
           let foundPeople2 =  users.find((user) => user.id === element)
-      
           if (foundPeople2){
                 followingArray.push(foundPeople2)
               }
@@ -119,19 +115,9 @@ let foundFollower = onlineUserFollowing.some((item)=> item.id === foundUser?.id)
     setFollowing(false)
   }
 
-  followers.forEach((people) => {
-   const itsAFollower =  onlineUserFollowing.some((item) => item.id === people.id)
-    if (itsAFollower){
-      setFollow(true) 
-    } else {
-      setFollow(false)
-    }
-  }
-  )
 },[])
 
   useEffect(() => {
-    console.log("useEFEEFT")
   if (foundUser){
     getUserFollower(foundUser)
   }
@@ -213,12 +199,13 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
           <p> <span className='font-bold'> {foundUser?.username}</span></p>
           { (foundUser?.id === user.id) &&
           <div>
+            <Link href={`/edit`}>
          <Button variant="outlined" startIcon={<PersonIcon />}>Edit profile</Button>
-
+          </Link>
           </div>
-}
-{
-    (foundUser?.id !== user.id) && <div>
+          }
+          {
+        (foundUser?.id !== user.id) && <div>
                   {
             followings && 
             <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={() => removeFollow(foundUser, user)}>UnFollow</Button>

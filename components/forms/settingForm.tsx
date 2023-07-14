@@ -22,19 +22,19 @@ const SettingForm = () => {
         resolver: yupResolver(schema)
     })
     const onSubmit = (data: any) => {
-       signIn('credentials', {email: data.email, password: data.password, redirect : false})
+      
     }
     const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
 
   return (
 
     <form action="" onSubmit={handleSubmit(onSubmit)}className='flex flex-col gap-7 items-center'>
-      <div className='border-gray-200 border-2 rounded-lg flex flex-col gap-8 items-end px-5'>
+      <div className='flex flex-col gap-8 items-end px-5 py-7'>
         <div className='flex gap-4'>
         <p><Avatar alt={user.username} src={user.picture} sx={{ width: 62, height: 62}} /></p>
         <div>
             <p>{user.username}</p>
-            <Controller
+     <Controller
         name="photo"
         control={control}
         defaultValue=''
