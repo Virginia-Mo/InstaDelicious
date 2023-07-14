@@ -7,11 +7,15 @@ import { getFollowers, getFollowing } from '@/redux/reducers/users'
 import { AddFollowing, MinusFollowing } from '@/async_calls/follower';
 import { getConnectedUser, getUsers } from '@/async_calls/user/getUser';
 import { GetFollow } from '@/components/utils/follow'
-
+import  Dialog  from '@mui/material/Dialog'
 import Navbar from '@/components/navBar/Navbar'
 import BigAvatars from '@/components/avatar/bigavatar'
 
+
 import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import Modal from '@mui/material/Modal';
@@ -54,6 +58,8 @@ export default function Profile ({ params }: { params: { id: number } }) {
   const [anchorEl2, setAnchorEl2] = React.useState<null | HTMLElement>(null);
   const [follow, setFollow] = React.useState(false);
   const [followings, setFollowing] = React.useState(true);
+  const [openFollowBox, setOpenFollowBox] = React.useState(false)
+  const [openFollowBox2, setOpenFollowBox2] = React.useState(false)
 
 
   const id = +params.id
@@ -105,32 +111,31 @@ console.log("userInf", userInf)
         }
 
 useEffect(() => {
-let tryit = onlineUserFollowing.some((item)=> item.id === foundUser?.id)
+let foundFollower = onlineUserFollowing.some((item)=> item.id === foundUser?.id)
 
-  if (tryit){
+  if (foundFollower){
     setFollowing(true)
   } else {
     setFollowing(false)
   }
-  console.log("followingggg", followings)
+
+  followers.forEach((people) => {
+   const itsAFollower =  onlineUserFollowing.some((item) => item.id === people.id)
+    if (itsAFollower){
+      setFollow(true) 
+    } else {
+      setFollow(false)
+    }
+  }
+  )
 },[])
 
   useEffect(() => {
+    console.log("useEFEEFT")
   if (foundUser){
-    console.log("useeffect")
     getUserFollower(foundUser)
   }
   }, [user])
-
-  // useEffect(() => {
-  //   const follow =  GetFollow(user, users)
-  //   if (follow){
-  //   console.log("folllll", follow)
-  //   }
-
-  //   }, [user]) 
-
-
 
 const handleOpen = (post : Post) => {
   setSelectedImg('')
@@ -146,39 +151,51 @@ const handleClose = () => {
   setOpen(false);
 };
 
-const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-  setAnchorEl(event.currentTarget);
-  setOpenFollow((previousOpenFollow) => !previousOpenFollow);
-};
-const handleClick2 = (event: React.MouseEvent<HTMLElement>) => {
-  setAnchorEl2(event.currentTarget);
-  setOpenFollow2((previousOpenFollow) => !previousOpenFollow);
-};
-const canBeOpenFollow = openFollow && Boolean(anchorEl) && !openFollow2;
-const id2 = canBeOpenFollow ? 'transition-popper' : undefined;
+const handleOpenFollow = () => {
+  setOpenFollowBox(true)
+}
+const handleCloseFollow = () => {
+  setOpenFollowBox(false)
+}
+const handleOpenFollow2 = () => {
+  setOpenFollowBox2(true)
+}
+const handleCloseFollow2 = () => {
+  setOpenFollowBox2(false)
+}
+// const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+//   setAnchorEl(event.currentTarget);
+//   setOpenFollow((previousOpenFollow) => !previousOpenFollow);
+// };
+// const handleClick2 = (event: React.MouseEvent<HTMLElement>) => {
+//   setAnchorEl2(event.currentTarget);
+//   setOpenFollow2((previousOpenFollow) => !previousOpenFollow);
+// };
+// const canBeOpenFollow = openFollow && Boolean(anchorEl) && !openFollow2;
+// const id2 = canBeOpenFollow ? 'transition-popper' : undefined;
 
-const canBeOpenFollow2 = openFollow2 && Boolean(anchorEl2) && !openFollow;
-const id22 = canBeOpenFollow2 ? 'transition-popper' : undefined;
+// const canBeOpenFollow2 = openFollow2 && Boolean(anchorEl2) && !openFollow;
+// const id22 = canBeOpenFollow2 ? 'transition-popper' : undefined;
 
 
 const editFollow = async(bool : boolean, res : Response) => {
   if (res.status === 200){
     setFollowing(bool)
+    setFollow(bool)
      const usersCall  = await getUsers()
      console.log("CALL2", usersCall)
      if (usersCall.length >0 ){
        foundUser = usersCall.find((user : UserDB) => user.id === id)
-       console.log("newuser", foundUser)
         getUserFollower(foundUser)
      }
    } }
 
-const addOneFollower = async() => {
-  const response : Response  =  await AddFollowing(foundUser?.id, user.id)
+const addOneFollower = async(userPage : UserDB, userOnline : UserDB) => {
+  const response : Response  =  await AddFollowing(userPage?.id, userOnline.id)
   editFollow(true, response)
 }
-const removeFollow = async() => {
-  const response : Response  =  await MinusFollowing(foundUser?.id, user.id)
+const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
+  const response : Response  =  await MinusFollowing(userPage?.id, userOnline.id)
     editFollow(false, response)
 }
 
@@ -204,11 +221,11 @@ const removeFollow = async() => {
     (foundUser?.id !== user.id) && <div>
                   {
             followings && 
-            <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
+            <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={() => removeFollow(foundUser, user)}>UnFollow</Button>
           }
           { 
            !followings &&
-            <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
+            <Button variant="contained" onClick={() => addOneFollower(foundUser, user)} startIcon={<AddIcon />}>Follow</Button>
             }
     </div>
 }
@@ -218,33 +235,38 @@ const removeFollow = async() => {
             <p> <span className='font-bold'>{foundUser?.posts.length} </span> posts</p>
             {
               followers !== undefined && 
-              <><p aria-describedby={id2} onClick={handleClick}> <span className='font-bold'> {followers.length}</span> followers</p>
-              <Popper id={id} open={openFollow} anchorEl={anchorEl} transition>
-                    {({ TransitionProps }) => (
-                      <Fade {...TransitionProps} timeout={350}>
-                        <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
-                        <h2>Following</h2>
-                          {followers.map((foundFollow) => (
-                            <>
-                              <Link href={`/profile/${foundFollow.id}`} key={foundFollow.id}>
-                                <BadgeAvatars user={foundFollow} />
-                                <p >{foundFollow.username}</p>  </Link>
-                                {
-                                  (foundFollow.id === user.id) && <></>
-                                }
-                                {
-                                  (!onlineUserFollowing.includes(foundFollow?.id)  && foundFollow.id !== user.id) &&
-                                  <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
-                                }
-                                {(onlineUserFollowing.includes(foundFollow?.id) && foundFollow.id !== user.id) && 
-                                <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
-                                }
+              <>
+              <p onClick={handleOpenFollow}> <span className='font-bold'> {followers.length}</span> followers</p>
+                  
+                    <Dialog
+                      open={openFollowBox}
+                      onClose={handleCloseFollow}
+                       >
+                    <DialogTitle> {foundUser?.username}'s Followers</DialogTitle>
+                    <List sx={{ pt: 0 }}>
+                    <Fade in={openFollowBox}>
+
+                      <Box>
+                        {followers.map((foundFollow) => (
+                          <ListItem key={foundFollow.id}>
+                          <><div className='flex justify-between items-center w-80'>
+                           
+
+                              <BadgeAvatars user={foundFollow} /> 
+                            <Link href={`/profile/${foundFollow.id}`} key={foundFollow.id}>
+                              <Button size="small" variant="contained">See profile</Button>
+                              </Link>
                             
-                            </>))}
-                        </Box>
-                      </Fade>
-                    )}
-                  </Popper></>
+                          </div>
+                          </>
+                          </ListItem>))}
+                      </Box>
+                    </Fade>
+                    </List>
+                  </Dialog>
+                  
+                  </> 
+                  
             }
            {
             followers === undefined &&
@@ -252,36 +274,29 @@ const removeFollow = async() => {
            }
             {
               following !== undefined && 
-              <><p aria-describedby={id22} onClick={handleClick2}> <span className='font-bold'> {following.length}</span> following</p>
-              <Popper id={id22} open={openFollow2} anchorEl={anchorEl2} transition>
-                    {({ TransitionProps }) => (
-                      <Fade {...TransitionProps} timeout={350}>
-                        <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
-                          <h2>Following</h2>
+              <><p onClick={handleOpenFollow2}> <span className='font-bold'> {following.length}</span> following</p>
+                    <Dialog
+                      open={openFollowBox2}
+                      onClose={handleCloseFollow2} >
+                    <DialogTitle> {foundUser?.username}'s Following</DialogTitle>
+                    <List sx={{ pt: 0 }}>
+                    <Fade in={openFollowBox2}>
+                        <Box>
                           {following.map((foundFollow) => (
-                            <>
-                              <Link href={`/profile/${foundFollow.id}`} key={foundFollow.id}>
+                            <ListItem key={foundFollow.id}>
+                            <><div className='flex justify-between items-center w-80'>
                                 <BadgeAvatars user={foundFollow} />
-                                <p >{foundFollow.username}</p>
-
-                                {
-                                  (foundFollow.id === user.id) && <></>
-                                }
-                                {
-                                (!onlineUserFollowing.includes(foundFollow?.id)  && foundFollow.id !== user.id) &&
-                                  <Button variant="contained" startIcon={<PersonRemoveIcon />} onClick={removeFollow}>UnFollow</Button>
-                                }
-                              {
-                              (onlineUserFollowing.includes(foundFollow?.id) && foundFollow.id !== user.id) &&
-                                <Button variant="contained" onClick={addOneFollower} startIcon={<AddIcon />}>Follow</Button>
-                                }                                    
-                                
+                            <Link href={`/profile/${foundFollow.id}`} key={foundFollow.id}>
+                              <Button size="small" variant="contained">See profile</Button>
                               </Link>
-                            </>))}
+                            
+                                </div>
+                            </>
+                            </ListItem>))}
                         </Box>
                       </Fade>
-                    )}
-                  </Popper></>
+                      </List>
+                  </Dialog></>
             }
            {
             following === undefined &&
