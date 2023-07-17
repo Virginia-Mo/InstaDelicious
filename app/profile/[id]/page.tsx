@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect } from 'react'
-import { useAppSelector, useAppDispatch } from '@/Types/reduxTypes'
+import { useAppSelector, useAppDispatch } from '@/types/reduxTypes'
 import { Post, UserDB } from '@/Types/models'
 import { getFollowers, getFollowing } from '@/redux/reducers/users'
 import { AddFollowing, MinusFollowing } from '@/async_calls/follower';
@@ -25,6 +25,7 @@ import Link from 'next/link';
 import BadgeAvatars from '@/components/avatar/avatar';
 import AddIcon from '@mui/icons-material/Add';
 import PersonIcon from '@mui/icons-material/Person';
+import { useSession } from 'next-auth/react'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -40,7 +41,7 @@ const style = {
 
 
 export default function Profile ({ params }: { params: { id: number } }) {
-  
+  const {data: session} = useSession()
   const dispatch = useAppDispatch()
   
   const users = useAppSelector((state) => state.persistedReducer.user.users)
@@ -118,7 +119,7 @@ let foundFollower = onlineUserFollowing.some((item)=> item.id === foundUser?.id)
   } else {
     setFollowing(false)
   }
-
+console.log(session?.user.accessToken)
   followers.forEach((people) => {
    const itsAFollower =  onlineUserFollowing.some((item) => item.id === people.id)
     if (itsAFollower){
@@ -213,8 +214,8 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
           <p> <span className='font-bold'> {foundUser?.username}</span></p>
           { (foundUser?.id === user.id) &&
           <div>
-         <Button variant="outlined" startIcon={<PersonIcon />}>Edit profile</Button>
-
+         <Link href={"/edit"}><Button variant="outlined" startIcon={<PersonIcon />}>Edit profile</Button>
+          </Link>
           </div>
 }
 {
@@ -250,8 +251,6 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
                         {followers.map((foundFollow) => (
                           <ListItem key={foundFollow.id}>
                           <><div className='flex justify-between items-center w-80'>
-                           
-
                               <BadgeAvatars user={foundFollow} /> 
                             <Link href={`/profile/${foundFollow.id}`} key={foundFollow.id}>
                               <Button size="small" variant="contained">See profile</Button>

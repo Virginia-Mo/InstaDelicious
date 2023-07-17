@@ -6,7 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { signOut } from 'next-auth/react';
-import { useAppDispatch } from '@/Types/reduxTypes';
+import { useAppDispatch } from '@/types/reduxTypes';
 import {getUser, setOnline} from '@/redux/reducers/users';
 import Link from 'next/link';
 

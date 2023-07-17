@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react'
 import Navbar from '@/components/navBar/Navbar'
-import { useAppSelector, useAppDispatch } from '@/Types/reduxTypes'
+import { useAppSelector, useAppDispatch } from '@/types/reduxTypes'
 import BadgeAvatars from '@/components/avatar/avatar'
 import CardPost from '@/components/cardPost/cardPost'
 import BigAvatars from '@/components/avatar/bigavatar'

@@ -6,7 +6,7 @@ import LoginForm from '@/components/forms/loginForm'
 import ButtonSign from '@/components/profile/buttonCompo'
 import { useSession, signIn, signOut } from "next-auth/react"
 import Home from './home/page'
-import { useAppDispatch, useAppSelector } from '@/Types/reduxTypes'
+import { useAppDispatch, useAppSelector } from '@/types/reduxTypes'
 import { setOnline } from '@/redux/reducers/users'
 import { fetchUser } from '@/redux/middlewares/users'
 // import React, {useEffect } from "react"

@@ -3,7 +3,7 @@
 import { UserDB } from '@/Types/models'
 import Navbar from '@/components/navBar/Navbar'
 import React, {useEffect } from "react"
-import { useAppSelector, useAppDispatch } from '@/Types/reduxTypes'
+import { useAppSelector, useAppDispatch } from '@/types/reduxTypes'
 import CardPost from '@/components/cardPost/cardPost'
 import BadgeAvatars from '@/components/avatar/avatar'
 import { useSession } from 'next-auth/react'
