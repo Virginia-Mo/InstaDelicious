@@ -1,7 +1,7 @@
 'use client'
 import React, { useState} from 'react'
 import Link from 'next/link'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object, string, mixed} from 'yup'
@@ -15,20 +15,21 @@ import { editProfile } from '@/async_calls/edit'
 
 const schema = object({
   // image : mixed(),
-    bio: string().required('Password is required'),
+    bio: string(),
 }).required()
 
 interface optionsForm {
   picture: string,
   bio: string,
   email: string,
-  id: number
+  id: number,
+  token: string
 }
 
 const SettingForm = () => {
   const [file, setFile] = useState(null)
   const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
-
+const { data: session } = useSession()
     const {handleSubmit, control, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     })
@@ -50,7 +51,8 @@ const SettingForm = () => {
         picture: file ? picture : user.picture,
         bio: data.bio,
         email: user.email,
-        id : user.id
+        id : user.id,
+        token : session?.user.accessToken
       }
       console.log(options, "there")
         editProfile(options)
