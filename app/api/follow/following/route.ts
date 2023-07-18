@@ -41,7 +41,6 @@ export async function POST(request : Request) {
 
 export async function PATCH(request : Request) {
       const body = await request.json()
-      console.log("PAAAATCHHHH")
           try {
 
             const followArray = await prisma.follower.findUnique({

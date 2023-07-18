@@ -31,18 +31,4 @@ export const AddPost = async (id: number, data : stateType) => {
         return error
     }
 }
-export const handleSubmitImage = async (data : string) => {
-    try {
-        const response = await axios.post(`https://api.cloudinary.com/v1_1/dps629xiv/image/upload`, 
-         {
-            body : data,
-        })
-        
-        if (response.status === 200) {
-            console.log("SUBMIT",response)
-        }
-        return response
-    } catch (error) {
-        return error
-    }
-}
+

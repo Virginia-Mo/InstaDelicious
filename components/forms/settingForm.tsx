@@ -4,72 +4,123 @@ import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { object, string } from 'yup'
+import { object, string, mixed} from 'yup'
 import { Button, TextField} from '@mui/material'
 import BadgeAvatars from '../avatar/avatar'
 import Avatar from '@mui/material/Avatar';
 import { useAppSelector } from '@/types/reduxTypes'
 import SettingsMenu from '../settingsMenu/settingsMenu'
 import { handleSubmitImage } from '@/async_calls/posts'
+import { editProfile } from '@/async_calls/edit'
 
 const schema = object({
-    email: string().required('Email is required').email('Email is invalid').trim(),
-    password: string().required('Password is required').min(5, 'Password must between 6 and 20 characters').max(20, 'Password must between 6 and 20 characters').trim(),
+  // image : mixed(),
+    bio: string().required('Password is required'),
 }).required()
 
-const SettingForm = () => {
+interface optionsForm {
+  picture: string,
+  bio: string,
+  email: string,
+  id: number
+}
 
-    const { handleSubmit, control, formState: { errors } } = useForm({
+const SettingForm = () => {
+  const [file, setFile] = useState(null)
+  const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
+
+    const {handleSubmit, control, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     })
-    const onSubmitImage = (data: any) => {
-      console.log(data)
-      // handleSubmitImage(data)
+    const onSubmitImage = async ( data: any, e : Event) => {
+      let picture
+       if (file) {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append("upload_preset", "Instadelicious");
+      const fileData = await fetch("https://api.cloudinary.com/v1_1/dps629xiv/image/upload", {
+        method: "POST",
+        body: formData
+      }) .then((res) => res.json())
+      if (fileData.secure_url) {
+        picture = fileData.secure_url
+      }
     }
-    const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
+      const options : optionsForm = {
+        picture: file ? picture : user.picture,
+        bio: data.bio,
+        email: user.email,
+        id : user.id
+      }
+      console.log(options, "there")
+        editProfile(options)
+    
+  }
+
+const onChangeImage = (e: any) => {
+  const file = e.target.files[0];
+  setFile(file)
+  console.log(file)
+}
+
+   
 
   return (
+<div>
 
-    <form action="" onSubmit={handleSubmit(onSubmitImage)} className='flex flex-col gap-7 items-center'>
+<form action="" onSubmit={handleSubmit(onSubmitImage)} className='flex flex-col gap-7 items-center'>
       <div className='border-gray-200 border-2 rounded-lg flex flex-col gap-8 items-end px-5'>
-        <div className='flex gap-4'>
-        <p><Avatar alt={user.username} src={user.picture} sx={{ width: 62, height: 62}} /></p>
+        <div className='flex gap-4'> 
+         <Avatar alt={user.username} src={user.picture} sx={{ width: 62, height: 62}} />
         <div>
             <p>{user.username}</p>
-            <Controller
-        name="file"
+            
+            {/* <Controller
+        name="image"
         control={control}
         defaultValue=''
         render={({field}) => <TextField {...field}
-        id='photo'
+        id='image'
         type='file'
         variant='standard'
-        label="Username"
+        helperText={errors?.image ? errors?.image?.message : null} 
+        error={errors?.image ? true : false}
+        label="Your image"
         className='w-80 '/> 
-  }/> 
+  }/>  */}
+  <input 
+  type="file"
+  name="image"
+  id="image"
+  onChange={onChangeImage} 
+  />
         </div>
-      
-</div>
+      {errors.image && <p>{errors.message}</p> }
+</div> 
 <div className='flex gap-4 '>
 <p>Bio</p>
-{/* <Controller
+ <Controller
         name="bio"
         control={control}
-        defaultValue=''
+        defaultValue={user.bio}
         render={({field}) => <TextField {...field}
         id='bio'
-        type='textarea'
+        type='text'
         variant='outlined'
         label=""
-        className='w-80 '
-        error={errors?.password ? true : false}
-        />  */}
-  {/* }/> */}
+        className='w-80'
+        placeholder={user.bio}
+        helperText={errors?.bio ? errors?.bio?.message : null} 
+        error={errors?.bio ? true : false}
+    />  
+}/> 
 </div>
-   <Button type='submit' variant='outlined' className='w-80'>Submit</Button>
+<Button type='submit' variant='outlined' className='w-80'>Submit</Button>
 
     </div>
     </form>
+</div>
+
   )
 }
 

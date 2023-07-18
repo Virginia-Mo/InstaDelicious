@@ -12,22 +12,29 @@ import InboxIcon from '@mui/icons-material/Inbox';
 import DraftsIcon from '@mui/icons-material/Drafts'
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
+import Link from 'next/link';
 import SettingForm from '../forms/settingForm';
 import settingsInfosForm from '../forms/settingInfosForm';
 import SettingsInfosForm from '../forms/settingInfosForm';
 
 
 export default function SettingsMenu() {
-    const [openSetting, setOpenSetting] =  React.useState(true)
+    const [openSetting, setOpenSetting] =  React.useState(false)
+    const [openSettingProfile, setOpenSettingProfile] =  React.useState(true)
     const handleOpenSetting =  () => {
-        setOpenSetting(true)
+        setOpenSetting(false)
+        setOpenSettingProfile(true)
+        console.log(openSetting)
     }
     const handleCloseSetting = () => {
-        setOpenSetting(false)
+        setOpenSetting(true)
+        setOpenSettingProfile(false)
+        console.log(openSetting)
     }
   return (
+
     <div className='flex border-gray-200 border-2 rounded-lg'>
-    <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+    <Box className="bg-red-50">
       <nav aria-label="main mailbox folders">
         <List>
           <ListItem disablePadding>
@@ -35,8 +42,9 @@ export default function SettingsMenu() {
               <ListItemIcon>
                 <PersonIcon />
               </ListItemIcon>
-              <p onClick={handleOpenSetting}> <ListItemText primary="Profile"  /></p>
-             
+              <Link href={`/edit/profile`}>
+              <ListItemText primary="Profile" />
+              </Link>
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
@@ -44,17 +52,20 @@ export default function SettingsMenu() {
               <ListItemIcon>
                 <SettingsIcon />
               </ListItemIcon>
-              <p onClick={handleCloseSetting}>  <ListItemText primary="Settings" /></p>
-            
+              <Link href={`/edit/settings`}>
+              <ListItemText primary="Settings" />
+              </Link>
             </ListItemButton>
           </ListItem>
         </List>
       </nav>
     </Box>
-    { openSetting && <SettingForm />}
-    {!openSetting &&   <SettingsInfosForm />}
+   
+    {/* { openSettingProfile && <SettingForm />}
+    {openSetting &&   <SettingsInfosForm />} */}
     
   
     </div>
+
   )
 }

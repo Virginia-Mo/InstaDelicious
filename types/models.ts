@@ -17,7 +17,8 @@ export interface UserDB {
     id: number,
     posts: Post[],
     username: string,
-    picture: string
+    picture: string,
+    bio: string
 }
 export interface Post {
   authorId: number,
