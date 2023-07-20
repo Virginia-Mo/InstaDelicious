@@ -1,10 +1,9 @@
 import prisma from '@/prisma/client'
-import {
-    NextResponse
-} from 'next/server'
+import { NextResponse } from 'next/server'
+import { handleToken } from '../helpers/jwt'
 
 const bcrypt = require('bcrypt')
-
+const secret = process.env.NEXTAUTH_SECRET
 interface RequestData {
     email: string,
     password: string,
@@ -53,7 +52,11 @@ console.log("body", body)
 export async function PUT(req: Request) {
     const body: RequestData = await req.json()
     const bodyErrors: string[] = []
-console.log("body", body)
+
+    const response = await handleToken(req)
+    const checkedToken = response
+    console.log("checkedToken", checkedToken)
+    if (checkedToken !== undefined) {
     try {
         const user = await prisma.user.update({
             where: {
@@ -73,4 +76,8 @@ console.log("body", body)
         console.log(error)
         return NextResponse.json({message: 'Unable to create user'})
     }
+} else {
+    console.log("Access denied")
+    return NextResponse.json({message: 'Access denied'})
+}
 }

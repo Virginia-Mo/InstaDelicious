@@ -3,8 +3,18 @@ import SettingInfosForm from '@/components/forms/settingInfosForm'
 import Navbar from '@/components/navBar/Navbar'
 import SettingsMenu from '@/components/settingsMenu/settingsMenu'
 import React from 'react'
+import { useSession } from 'next-auth/react'
 
 const Settings = () => {
+
+ const { status } = useSession()
+if (status === "loading") {
+  return <p>Loading...</p>
+}
+if (status === "unauthenticated") {
+  return <p>Access Denied</p>
+}
+
   return (
     <div className='flex h-full'>
         <Navbar />

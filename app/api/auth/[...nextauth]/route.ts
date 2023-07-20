@@ -1,14 +1,14 @@
 import NextAuth, {RequestInternal, } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import axios from "axios"
-import { User } from "@/Types/models"
+import { User } from "@/types/models"
 
 interface Credentials {
   email: string
   password: string
 }
 
-const handler = NextAuth ({
+export const authOptions = ({
   // Configure one or more authentication providers
   providers: [
     CredentialsProvider({
@@ -42,5 +42,5 @@ const handler = NextAuth ({
  }
 
 })
-
+const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }

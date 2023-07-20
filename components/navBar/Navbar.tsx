@@ -8,6 +8,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { signOut } from 'next-auth/react';
 import { useAppDispatch } from '@/types/reduxTypes';
 import {getUser, setOnline} from '@/redux/reducers/users';
+import { redirect } from 'next/navigation'
 import Link from 'next/link';
 
 const Navbar = () => {
@@ -16,6 +17,7 @@ const Navbar = () => {
     dispatch(setOnline(false))
     dispatch(getUser())
     signOut()
+    redirect('/')
   }
   return (
     <aside className='sticky top-0 left-0'>

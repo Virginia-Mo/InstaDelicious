@@ -16,12 +16,8 @@ interface stateType {
     id : number,
     token : string
   }
-// interface stateType2 {
-//     email: string,
-//     picture: string,
-//     bio: string,
-//     id : number
-//   }  
+
+
 export async function editSettings (data : stateType) {
   try {
     const response = await axios.patch(`/api/edit`, 
@@ -43,17 +39,16 @@ export async function editSettings (data : stateType) {
 
 export async function editProfile (data : stateType) {
     try {
-      const response = await axios.put(`/api/edit`, {
+      const response = await axios.put(`/api/edit`, 
+      {
+        picture : data.picture,
+        bio : data.bio,
+        email : data.email },
+        { headers : {
+          Authorization : `Bearer ${data.token}`}
+         },
+      )
         
-           picture : data.picture,
-           bio : data.bio,
-           email : data.email, 
-           headers : {
-             authorization : `Bearer ${data.token}`
-             
-            },
-          })
-
       if (response.status === 200) {
         getConnectedUser(data.id)
          store.dispatch(getMessage(response.data.message))

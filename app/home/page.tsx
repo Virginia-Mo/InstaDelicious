@@ -1,6 +1,6 @@
 'use client'
 
-import { UserDB } from '@/Types/models'
+import { UserDB } from '@/types/models'
 import Navbar from '@/components/navBar/Navbar'
 import React, {useEffect } from "react"
 import { useAppSelector, useAppDispatch } from '@/types/reduxTypes'
@@ -14,7 +14,15 @@ import { GetFollow } from '@/components/utils/follow'
 
 
 export default function Home() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+
+  if (status === "loading") {
+    return <p>Loading...</p>
+  }
+  if (status === "unauthenticated") {
+    return <p>Access Denied</p>
+  }
+
   const dispatch = useAppDispatch()
   const id  = session?.user.userData.id as number
 

@@ -41,7 +41,14 @@ const style = {
 
 
 export default function Profile ({ params }: { params: { id: number } }) {
-  const {data: session} = useSession()
+  const { status } = useSession()
+  console.log(status)
+  if (status === "loading"){
+    return <p>loading</p>
+  }
+  if (status === "unauthenticated") {
+    return <p>Access Denied</p>
+  } 
   const dispatch = useAppDispatch()
   
   const users = useAppSelector((state) => state.persistedReducer.user.users)
@@ -62,7 +69,7 @@ export default function Profile ({ params }: { params: { id: number } }) {
   const [openFollowBox, setOpenFollowBox] = React.useState(false)
   const [openFollowBox2, setOpenFollowBox2] = React.useState(false)
 
-
+console.log("following", users)
   const id = +params.id
   let foundUser  = users.find((user) => user.id === id)
 
@@ -201,6 +208,7 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
 }
 
   return (
+  
     <div className='flex h-screen'>
      <Navbar />
     <div className='grow flex justify-center mt-10'>
