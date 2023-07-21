@@ -26,9 +26,13 @@ export async function editSettings (data : stateType) {
         email : data.email,
         password : data.password,
         username : data.username,
-    })
+    },
+    { headers : {
+      Authorization : `Bearer ${data.token}`}
+     })
     console.log("response", data)
     if (response.status === 200) {
+      getConnectedUser(data.id)
        store.dispatch(getMessage(response.data.message))
     }
     return response
@@ -46,7 +50,7 @@ export async function editProfile (data : stateType) {
         email : data.email },
         { headers : {
           Authorization : `Bearer ${data.token}`}
-         },
+         }
       )
         
       if (response.status === 200) {

@@ -16,8 +16,12 @@ interface RequestData {
 export async function PATCH(req: Request) {
     const body: RequestData = await req.json()
     const bodyErrors: string[] = []
-console.log("body", body)
 
+    const response = await handleToken(req)
+    const checkedToken = response
+    console.log("body", checkedToken)
+
+    if (checkedToken !== null) {
     try {
         if (body.password !== body.confirmPassword) {
             throw new Error('Error : Passwords do not match')
@@ -46,6 +50,9 @@ console.log("body", body)
     catch (error){
         console.log(error)
         return NextResponse.json({message: 'Unable to create user'})
+    } } else {
+        console.log("Access denied")
+        return NextResponse.json({message: 'Access denied'})
     }
 }
 
@@ -55,8 +62,7 @@ export async function PUT(req: Request) {
 
     const response = await handleToken(req)
     const checkedToken = response
-    console.log("checkedToken", checkedToken)
-    if (checkedToken !== undefined) {
+    if (checkedToken !== null) {
     try {
         const user = await prisma.user.update({
             where: {

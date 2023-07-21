@@ -21,7 +21,12 @@ const schema = object({
     password: string().required("Password is required").min(6, 'Password must be between 6 and 20 characters').max(20, 'Password must be between 6 and 20 characters').trim(),
     confirmPassword: string().required('Please re-enter your password').oneOf([ref("password")], "Passwords don't match !").trim(),
 }).required()
-
+interface optionsForm {
+  username: string,
+  email: string,
+  password: string,
+  token: string,
+}
 const SettingInfosForm = () => {
 const dispatch = useAppDispatch()
 
@@ -32,7 +37,13 @@ const dispatch = useAppDispatch()
     })
     const onSubmit = (data: any) => {
       if (data.password === data.confirmPassword) {
-      editSettings(data)
+        const options : optionsForm = {
+          username: data.username,
+          email: data.email,
+          password : data.password,
+          token : session?.user.accessToken
+        }
+      editSettings(options)
     } else {
       // dispatch(getMessage(response.data.message))
       return

@@ -1,3 +1,5 @@
+'use client'
+
 import SettingForm from '@/components/forms/settingForm'
 import SettingInfosForm from '@/components/forms/settingInfosForm'
 import Navbar from '@/components/navBar/Navbar'
