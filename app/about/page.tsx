@@ -2,7 +2,7 @@
 
 import { AddPost } from '@/async_calls/posts'
 import React from 'react'
-import { useAppSelector } from '@/Types/reduxTypes'
+import { useAppSelector } from '@/types/reduxTypes'
 
 const About = () => {
   

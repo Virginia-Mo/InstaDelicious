@@ -2,7 +2,7 @@
 
 import SignupForm from '@/components/forms/signupForm'
 import React from 'react'
-import { useAppSelector } from '@/Types/reduxTypes'
+import { useAppSelector } from '@/types/reduxTypes'
 import { Alert, AlertTitle } from '@mui/material'
 
 export default function SignUp () {

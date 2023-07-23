@@ -1,24 +1,15 @@
 'use client'
 
-import Link from 'next/link'
 import React, {useEffect } from "react"
 import LoginForm from '@/components/forms/loginForm'
-import ButtonSign from '@/components/profile/buttonCompo'
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import Home from './home/page'
 import { useAppDispatch, useAppSelector } from '@/types/reduxTypes'
-import { setOnline } from '@/redux/reducers/users'
-import { fetchUser } from '@/redux/middlewares/users'
-// import React, {useEffect } from "react"
 
 export default function FirstPage() {
 const dispatch = useAppDispatch()
     const { data: session } = useSession()
     console.log(session)
-    // if (session) {
-    //   dispatch(setOnline(true))
-    //   dispatch(fetchUser(session.user.userData.id))
-    // }
   
     const user = useAppSelector((state) => state.persistedReducer.user.user)
   return (

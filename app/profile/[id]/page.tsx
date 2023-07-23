@@ -1,17 +1,18 @@
 'use client'
 
 import React, { useEffect } from 'react'
+import Link from 'next/link';
 import { useAppSelector, useAppDispatch } from '@/types/reduxTypes'
-import { Post, UserDB } from '@/Types/models'
+import { Post, UserDB } from '@/types/models'
 import { getFollowers, getFollowing } from '@/redux/reducers/users'
 import { AddFollowing, MinusFollowing } from '@/async_calls/follower';
-import { getConnectedUser, getUsers } from '@/async_calls/user/getUser';
-import { GetFollow } from '@/components/utils/follow'
-import  Dialog  from '@mui/material/Dialog'
+import { getUsers } from '@/async_calls/user/getUser';
+import { useSession } from 'next-auth/react'
 import Navbar from '@/components/navBar/Navbar'
 import BigAvatars from '@/components/avatar/bigavatar'
 
 
+import  Dialog  from '@mui/material/Dialog'
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -19,13 +20,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import Modal from '@mui/material/Modal';
-import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
-import Link from 'next/link';
 import BadgeAvatars from '@/components/avatar/avatar';
 import AddIcon from '@mui/icons-material/Add';
 import PersonIcon from '@mui/icons-material/Person';
-import { useSession } from 'next-auth/react'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -34,21 +32,14 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: 800,
   // bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  
+  // border: '2px solid #000',
+  boxShadow: 24
 };
 
 
 export default function Profile ({ params }: { params: { id: number } }) {
   const { status } = useSession()
   console.log(status)
-  if (status === "loading"){
-    return <p>loading</p>
-  }
-  if (status === "unauthenticated") {
-    return <p>Access Denied</p>
-  } 
   const dispatch = useAppDispatch()
   
   const users = useAppSelector((state) => state.persistedReducer.user.users)
@@ -60,16 +51,10 @@ export default function Profile ({ params }: { params: { id: number } }) {
   const [open, setOpen] = React.useState(false);
   const [selectedPost, setselectedPost] = React.useState('' as any)
   const [selectedImg, setSelectedImg] = React.useState('')
-  const [openFollow, setOpenFollow] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [openFollow2, setOpenFollow2] = React.useState(false);
-  const [anchorEl2, setAnchorEl2] = React.useState<null | HTMLElement>(null);
-  const [follow, setFollow] = React.useState(false);
   const [followings, setFollowing] = React.useState(true);
   const [openFollowBox, setOpenFollowBox] = React.useState(false)
   const [openFollowBox2, setOpenFollowBox2] = React.useState(false)
 
-console.log("following", users)
   const id = +params.id
   let foundUser  = users.find((user) => user.id === id)
 
@@ -122,21 +107,7 @@ let foundFollower = onlineUserFollowing.some((item)=> item.id === foundUser?.id)
   } else {
     setFollowing(false)
   }
-// console.log(session?.user.accessToken axios
-//   .delete(`${API_BASE_URL}/profile`, {
-//     headers: {
-//       Authorization: `bearer ${token}`
-//     },
-//   })
-  followers.forEach((people) => {
-   const itsAFollower =  onlineUserFollowing.some((item) => item.id === people.id)
-    if (itsAFollower){
-      setFollow(true) 
-    } else {
-      setFollow(false)
-    }
-  }
-  )
+  
 },[])
 
   useEffect(() => {
@@ -148,7 +119,6 @@ let foundFollower = onlineUserFollowing.some((item)=> item.id === foundUser?.id)
 const handleOpen = (post : Post) => {
   setSelectedImg('')
   setselectedPost('')
-  console.log("open", post)
   setSelectedImg(post.url)
   setselectedPost(post)
   setOpen(true);}
@@ -171,25 +141,11 @@ const handleOpenFollow2 = () => {
 const handleCloseFollow2 = () => {
   setOpenFollowBox2(false)
 }
-// const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-//   setAnchorEl(event.currentTarget);
-//   setOpenFollow((previousOpenFollow) => !previousOpenFollow);
-// };
-// const handleClick2 = (event: React.MouseEvent<HTMLElement>) => {
-//   setAnchorEl2(event.currentTarget);
-//   setOpenFollow2((previousOpenFollow) => !previousOpenFollow);
-// };
-// const canBeOpenFollow = openFollow && Boolean(anchorEl) && !openFollow2;
-// const id2 = canBeOpenFollow ? 'transition-popper' : undefined;
-
-// const canBeOpenFollow2 = openFollow2 && Boolean(anchorEl2) && !openFollow;
-// const id22 = canBeOpenFollow2 ? 'transition-popper' : undefined;
 
 
 const editFollow = async(bool : boolean, res : Response) => {
   if (res.status === 200){
     setFollowing(bool)
-    setFollow(bool)
      const usersCall  = await getUsers()
      console.log("CALL2", usersCall)
      if (usersCall.length >0 ){
@@ -206,7 +162,12 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
   const response : Response  =  await MinusFollowing(userPage?.id, userOnline.id)
     editFollow(false, response)
 }
-
+if (status === "loading"){
+  return <p>loading</p>
+}
+if (status === "unauthenticated") {
+  return <p>Access Denied</p>
+} 
   return (
   
     <div className='flex h-screen'>
@@ -217,9 +178,10 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
         <div>
           <BigAvatars user={foundUser} />
         </div> 
+        <div>
         <div className='flex flex-col justify-evenly'>
-          <div className='flex gap-8'>
-          <p> <span className='font-bold'> {foundUser?.username}</span></p>
+          <div className='flex gap-8 mb-3'>
+          <p> <span className='font-bold text-3xl'> {foundUser?.username}</span></p>
           { (foundUser?.id === user.id) &&
           <div>
             <Link href={`/edit/profile`}>
@@ -241,7 +203,7 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
 }
 
             </div>
-          <div className='flex gap-5 mb-10'>
+          <div className='flex gap-5 mb-2'>
             <p> <span className='font-bold'>{foundUser?.posts.length} </span> posts</p>
             {
               followers !== undefined && 
@@ -272,9 +234,7 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
                     </Fade>
                     </List>
                   </Dialog>
-                  
-                  </> 
-                  
+                  </>
             }
            {
             followers === undefined &&
@@ -297,7 +257,6 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
                             <Link href={`/profile/${foundFollow.id}`} key={foundFollow.id}>
                               <Button size="small" variant="contained">See profile</Button>
                               </Link>
-                            
                                 </div>
                             </>
                             </ListItem>))}
@@ -312,7 +271,8 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
            }
           </div>
           </div>
-        <div>{user.bio}</div>
+        <div className='text-xl'>{foundUser?.bio}</div>
+        </div>
           </section>
       <section className='flex flex-wrap gap-2 '>
       {foundUser?.posts.map((post) => (
@@ -325,8 +285,10 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
           // aria-labelledby="modal-modal-title"
           // aria-describedby="modal-modal-description"
         ><Box sx={style} className="flex">
-              <img src={selectedImg} alt="" className='h-full w-full' />
-              <p className='text-white'>{selectedPost.details}</p>
+          <div className='flex' >
+            <div className='w-5/6 flex'>
+              <img src={selectedImg} alt="" className='h-full w-full' /></div>
+              <p className='text-black w-3/12 bg-white py-3 px-2'>{selectedPost.details}</p></div>
             </Box>
           </Modal> 
       </section>

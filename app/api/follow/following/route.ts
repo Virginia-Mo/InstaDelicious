@@ -1,5 +1,5 @@
 import prisma from '@/prisma/client'
-import { Follow } from '@/Types/models'
+import { Follow } from '@/types/models'
 import { NextResponse } from 'next/server'
 
 export async function POST(request : Request) {

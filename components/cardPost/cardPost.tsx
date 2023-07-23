@@ -14,8 +14,9 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Post } from '@/Types/models';
+import { Post, UserDB } from '@/types/models';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import { useAppSelector } from '@/types/reduxTypes';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -31,21 +32,23 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
     duration: theme.transitions.duration.shortest,
   }),
 }));
-
 export default function CardPost({post} : {post: Post}) {
   const [expanded, setExpanded] = React.useState(false);
-
+  
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-  
+  console.log("post", post.authorId)
+  const postAuthor = post.authorId 
+  const users = useAppSelector((state) => state.persistedReducer.user.users)
+  console.log("users", postAuthor)
+  const user = users.find((user) => user.id === postAuthor)
+
   return (
     <Card sx={{ maxWidth: 600 }} className='CardA'>
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
-          </Avatar>
+          <Avatar sx={{ width: 58, height: 58}} aria-label="recipe" src={user?.picture} />
         }
         action={
           <IconButton aria-label="settings">

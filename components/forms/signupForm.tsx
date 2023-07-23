@@ -30,7 +30,6 @@ const SignupForm = () => {
         resolver: yupResolver(schema)
     })
     const onSubmit = (data: dataForm) => {
-        console.log("submit", data)
         AddNewUser(data)
     }
 

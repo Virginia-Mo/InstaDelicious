@@ -19,7 +19,6 @@ export async function PATCH(req: Request) {
 
     const response = await handleToken(req)
     const checkedToken = response
-    console.log("body", checkedToken)
 
     if (checkedToken !== null) {
     try {
@@ -30,7 +29,6 @@ export async function PATCH(req: Request) {
             throw new Error('Error : ' + bodyErrors.join(', '))
         }
         
-        console.log("body2", body)
         const hashedPassword : string =  await bcrypt.hash(body.password, 10)
         const user = await prisma.user.update({
             where: {
@@ -74,7 +72,7 @@ export async function PUT(req: Request) {
         }
         })
         if (!user) {
-            throw new Error('Unable to update user')
+            throw new Error('Unable to updatee user')
         }  
         return NextResponse.json({message : 'Your account has been updated successfully ! '})
     }

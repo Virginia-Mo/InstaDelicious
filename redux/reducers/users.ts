@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit"
 import type { PayloadAction } from '@reduxjs/toolkit'
 import {fetchUser} from '../middlewares/users'
-import { UserDB, User } from "@/Types/models"
+import { UserDB, User } from "@/types/models"
 
 
 interface SliceState {

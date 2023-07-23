@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {store} from '@/redux/store/store'
 import { fetchUser } from '@/redux/middlewares/users'
-import { Post } from '@/Types/models'
+import { Post } from '@/types/models'
 
 interface stateType {
   title: string,

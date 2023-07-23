@@ -1,20 +1,16 @@
 'use client'
 import React, { useState} from 'react'
-import Link from 'next/link'
-import { signIn, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object, string, mixed} from 'yup'
 import { Button, TextField} from '@mui/material'
-import BadgeAvatars from '../avatar/avatar'
 import Avatar from '@mui/material/Avatar';
 import { useAppSelector } from '@/types/reduxTypes'
-import SettingsMenu from '../settingsMenu/settingsMenu'
-import { handleSubmitImage } from '@/async_calls/posts'
 import { editProfile } from '@/async_calls/edit'
 
 const schema = object({
-  // image : mixed(),
+    image: mixed(),
     bio: string(),
 }).required()
 
@@ -27,6 +23,8 @@ interface optionsForm {
 }
 
 const SettingForm = () => {
+
+
   const [file, setFile] = useState(null)
   const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
 const { data: session } = useSession()
@@ -39,57 +37,39 @@ const { data: session } = useSession()
       const formData = new FormData()
       formData.append('file', file)
       formData.append("upload_preset", "Instadelicious");
-      const fileData = await fetch("https://api.cloudinary.com/v1_1/dps629xiv/image/upload", {
+      const fileData = await fetch(`https://api.cloudinary.com/v1_1/dps629xiv/image/upload`, {
         method: "POST",
         body: formData
       }) .then((res) => res.json())
       if (fileData.secure_url) {
         picture = fileData.secure_url
       }
+      console.log("picture", fileData.secure_url)
     }
       const options : optionsForm = {
         picture: file ? picture : user.picture,
         bio: data.bio,
         email: user.email,
         id : user.id,
-        token : session?.user.accessToken
+        token : session?.user.accessToken as string
       }
-      console.log(options, "there")
         editProfile(options)
-    
   }
 
 const onChangeImage = (e: any) => {
   const file = e.target.files[0];
   setFile(file)
-  console.log(file)
 }
-
-   
 
   return (
 <div>
 
 <form action="" onSubmit={handleSubmit(onSubmitImage)} className='flex flex-col gap-7 items-center'>
-      <div className='border-gray-200 border-2 rounded-lg flex flex-col gap-8 items-end px-5'>
+      <div className='border-gray-200 border-2 rounded-lg flex flex-col gap-8 items-end px-5 py-4'>
         <div className='flex gap-4'> 
          <Avatar alt={user.username} src={user.picture} sx={{ width: 62, height: 62}} />
         <div>
             <p>{user.username}</p>
-            
-            {/* <Controller
-        name="image"
-        control={control}
-        defaultValue=''
-        render={({field}) => <TextField {...field}
-        id='image'
-        type='file'
-        variant='standard'
-        helperText={errors?.image ? errors?.image?.message : null} 
-        error={errors?.image ? true : false}
-        label="Your image"
-        className='w-80 '/> 
-  }/>  */}
   <input 
   type="file"
   name="image"
@@ -97,7 +77,6 @@ const onChangeImage = (e: any) => {
   onChange={onChangeImage} 
   />
         </div>
-      {errors.image && <p>{errors.message}</p> }
 </div> 
 <div className='flex gap-4 '>
 <p>Bio</p>

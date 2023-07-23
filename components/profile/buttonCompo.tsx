@@ -2,8 +2,8 @@
 
 import { useSession, signIn, signOut } from "next-auth/react"
 import React, {useEffect } from "react"
-import { useAppDispatch, useAppSelector } from "@/Types/reduxTypes"
-import { Post, User, UserDB } from "@/Types/models"
+import { useAppDispatch, useAppSelector } from "@/types/reduxTypes"
+import { Post, User, UserDB } from "@/types/models"
 import { AddLikes, MinusLikes } from "@/async_calls/likes"
 import { fetchUser } from "@/redux/middlewares/users"
 

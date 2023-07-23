@@ -2,29 +2,28 @@
 
 import { getConnectedUser } from '@/async_calls/user/getUser'
 import SettingForm from '@/components/forms/settingForm'
-import SettingInfosForm from '@/components/forms/settingInfosForm'
 import Navbar from '@/components/navBar/Navbar'
 import SettingsMenu from '@/components/settingsMenu/settingsMenu'
 import React, { useEffect } from 'react'
 import { useAppSelector } from '@/types/reduxTypes'
 import { useSession } from 'next-auth/react'
-
+import { Alert, AlertTitle } from '@mui/material'
 const Settings = () => {
 
   const { status } = useSession()
+  const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
+  const message : string = useAppSelector((state) => state.persistedReducer.message.message)
+  useEffect(() => {
+  getConnectedUser(user.id)
+}, [])
+
   if (status === "loading") {
     return <p>Loading...</p>
   }
   if (status === "unauthenticated") {
     return <p>Access Denied</p>
   }
-
-const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
-
-useEffect(() => {
-  getConnectedUser(user.id)
-}, [])
-
+  console.log("user", message)
   return (
     <div className='flex h-full'>
         <Navbar />
@@ -33,7 +32,14 @@ useEffect(() => {
         <section className='mx-auto my-0 h-full flex flex-col pt-8'>
           <div className='flex'>
             <SettingsMenu/>
-            <SettingForm />
+            {!message &&
+            <SettingForm /> }
+            {message &&
+      <div className='flex pl-5 items-center'>
+      <Alert severity="success" >
+        <AlertTitle>Success ! </AlertTitle> {message}
+      </Alert>
+      </div>}
             </div>
         </section>
         </div>

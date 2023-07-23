@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit"
 import type {PayloadAction } from '@reduxjs/toolkit'
 import { fetchComments } from "../../async_calls/comments"
-import { Comment } from "@/Types/models"
+import { Comment } from "@/types/models"
 
 interface SliceState {
     comments: Comment[]

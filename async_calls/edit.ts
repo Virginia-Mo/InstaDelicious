@@ -3,9 +3,7 @@
 import axios from 'axios'
 import { getMessage } from '@/redux/reducers/message'
 import {store} from '@/redux/store/store'
-import { getOnlineUser } from '@/redux/reducers/users'
 import { getConnectedUser } from './user/getUser'
-import { useSession } from 'next-auth/react'
 
 interface stateType {
     email: string,
@@ -16,7 +14,13 @@ interface stateType {
     id : number,
     token : string
   }
-
+  interface stateType2 {
+    email: string,
+    picture: string
+    bio: string,
+    id : number,
+    token : string
+  }
 
 export async function editSettings (data : stateType) {
   try {
@@ -30,10 +34,12 @@ export async function editSettings (data : stateType) {
     { headers : {
       Authorization : `Bearer ${data.token}`}
      })
-    console.log("response", data)
     if (response.status === 200) {
       getConnectedUser(data.id)
-       store.dispatch(getMessage(response.data.message))
+      store.dispatch(getMessage(response.data.message))
+      setTimeout(() => {
+         store.dispatch(getMessage(""))
+         }, 2500);
     }
     return response
 } catch (error) {
@@ -41,7 +47,8 @@ export async function editSettings (data : stateType) {
 }
   }
 
-export async function editProfile (data : stateType) {
+export async function editProfile (data : stateType2) {
+  console.log("here", data)
     try {
       const response = await axios.put(`/api/edit`, 
       {
@@ -55,7 +62,10 @@ export async function editProfile (data : stateType) {
         
       if (response.status === 200) {
         getConnectedUser(data.id)
-         store.dispatch(getMessage(response.data.message))
+        store.dispatch(getMessage(response.data.message))
+        setTimeout(() => {
+           store.dispatch(getMessage(""))
+           }, 2500);
       }
       return response
   } catch (error) {

@@ -31,7 +31,7 @@ const SettingInfosForm = () => {
 const dispatch = useAppDispatch()
 
   const { data: session } = useSession()
-  console.log(session)
+  
     const { handleSubmit, control, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     })
@@ -41,6 +41,7 @@ const dispatch = useAppDispatch()
           username: data.username,
           email: data.email,
           password : data.password,
+          id : user.id,
           token : session?.user.accessToken
         }
       editSettings(options)
@@ -54,7 +55,7 @@ const dispatch = useAppDispatch()
   return (
 
     <form action="" onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-7 items-center'>
-      <div className='border-gray-200 border-1  flex flex-col gap-8 items-end px-5 py-7'>
+      <div className='border-gray-200 border-2 rounded-lg flex flex-col gap-8 items-end px-5 py-4'>
 <div className='flex gap-4 flex-col '>
 <Controller
         name="username"

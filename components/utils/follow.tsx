@@ -1,6 +1,6 @@
 'use client'
 
-import { UserDB } from "@/Types/models"
+import { UserDB } from "@/types/models"
 import { useAppSelector, useAppDispatch } from "@/types/reduxTypes"
 import { getOnlineUserFollower, getOnlineUserFollowing } from "@/redux/reducers/users"
 import { NextResponse } from "next/server"
