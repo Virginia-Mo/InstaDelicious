@@ -51,6 +51,7 @@ export async function PATCH(request : Request) {
             let followingArray : number[] = followArray?.following_user_id
 
             if (followingArray.length > 0 && followingArray.includes(+body.superId)) {
+              
               followingArray = followingArray.filter((id) => id !== +body.superId)
 
               const response = await prisma.follower.update({

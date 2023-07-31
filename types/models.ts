@@ -27,8 +27,8 @@ export interface Post {
   description: string,
   details: string,
   id: number,
-  ingredients: string,
-  like: number,
+  ingredients: string[],
+  like: Like,
   title: string,
   url: string
 }
@@ -51,5 +51,6 @@ export interface Like {
   createdAt: Date,
   amount: number,
   userId : number,
-  postId: number
+  postId: number,
+  userslikes : number[]
 }

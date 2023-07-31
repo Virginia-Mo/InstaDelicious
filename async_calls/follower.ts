@@ -8,7 +8,7 @@ import { get } from 'http'
 
 
 export async function AddFollowing ( followed : number, onlineUser : number) {
-console.log("sdfgh", onlineUser, followed)
+
     try {
         const response = await axios.post(`/api/follow/following`, 
          {

@@ -39,7 +39,7 @@ model Post {
   title       String
   url         String      @unique
   description String
-  ingredients String
+  ingredients String[]       @default([])
   details     String
   author      User?       @relation(fields: [authorId], references: [id])
   authorId    Int?
@@ -82,4 +82,5 @@ model Likes {
   user      User[]
   post      Post?    @relation(fields: [postId], references: [id])
   postId    Int?     @unique
+  userslikes Int[]   @default([])
 }

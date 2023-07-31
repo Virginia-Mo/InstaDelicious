@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -17,6 +18,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Post, UserDB } from '@/types/models';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { useAppSelector } from '@/types/reduxTypes';
+import { AddLikes, MinusLikes } from '@/async_calls/likes';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -34,16 +36,21 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 export default function CardPost({post} : {post: Post}) {
   const [expanded, setExpanded] = React.useState(false);
-  
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-  console.log("post", post.authorId)
+  const handleLike = () => {
+    AddLikes(post.id, onlineUser.id)
+  }
+  const handleMinusLike = () => {
+    MinusLikes(post.id, onlineUser.id)
+  }
   const postAuthor = post.authorId 
   const users = useAppSelector((state) => state.persistedReducer.user.users)
-  console.log("users", postAuthor)
   const user = users.find((user) => user.id === postAuthor)
+  const onlineUser = useAppSelector((state) => state.persistedReducer.user.onlineUser)
 
+  
   return (
     <Card sx={{ maxWidth: 600 }} className='CardA'>
       <CardHeader
@@ -55,8 +62,8 @@ export default function CardPost({post} : {post: Post}) {
             <MoreVertIcon />
           </IconButton>
         }
-        title={post.title}
-        subheader={post.createdAt}
+        title={user?.username}
+        subheader={post.title}
       />
       <CardMedia
         component="img"
@@ -72,7 +79,12 @@ export default function CardPost({post} : {post: Post}) {
       </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
+          {post.like && post.like.userslikes.includes(onlineUser.id) && 
+          <FavoriteIcon color="secondary" onClick={handleLike}/> }
+          {post.like && !post.like.userslikes.includes(onlineUser.id) &&
+          <FavoriteIcon onClick={handleMinusLike}/>
+          }
+          <FavoriteIcon color="secondary" />
         </IconButton>
         <BookmarkIcon color="disabled" aria-label="bookmark">
           <ShareIcon />
@@ -88,12 +100,12 @@ export default function CardPost({post} : {post: Post}) {
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>Ingredients:</Typography>
-          <Typography paragraph>
-            
-           {post.ingredients}
-          </Typography>
-          <Typography paragraph>
+          <Typography paragraph className='italic'>Ingredients:</Typography>
+           {post.ingredients.map((ingredient) => (
+              <Typography paragraph> - {ingredient}</Typography>
+           ))
+          }
+          <Typography paragraph className='italic'>
             Details : 
           </Typography>
           <Typography paragraph>

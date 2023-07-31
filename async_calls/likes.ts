@@ -3,10 +3,12 @@ import {store} from '@/redux/store/store'
 import { fetchUser } from '@/redux/middlewares/users'
 
 
-export const AddLikes = async (id: number) => {
+export const AddLikes = async (id: number, onlineUser : number) => {
     const user = store.getState().persistedReducer.user.user
     try {
-        const response = await axios.patch(`/api/like/${id}`)
+        const response = await axios.patch(`/api/like/${id}`, {
+            userId : onlineUser,
+        })
         if (response.status === 200) {
             store.dispatch(fetchUser(user.id))
         }
@@ -16,11 +18,13 @@ export const AddLikes = async (id: number) => {
     }
 }
 
-export const MinusLikes = async (id: number) => {
+export const MinusLikes = async (id: number, onlineUser : number) => {
     try {
         const user = store.getState().persistedReducer.user.user
 
-        const response = await axios.put(`/api/like/${id}`)
+        const response = await axios.put(`/api/like/${id}`, {
+            userId : onlineUser,
+        })
         if (response.status === 200) {
             store.dispatch(fetchUser(user.id))
         }
