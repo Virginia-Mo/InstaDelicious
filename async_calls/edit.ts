@@ -48,7 +48,7 @@ export async function editSettings (data : stateType) {
   }
 
 export async function editProfile (data : stateType2) {
-  console.log("here", data)
+
     try {
       const response = await axios.put(`/api/edit`, 
       {

@@ -22,7 +22,7 @@ export async function AddFollowing ( followed : number, onlineUser : number) {
     }
   }
   export async function MinusFollowing ( followed : number, onlineUser : number) {
-    console.log("patch")
+
         try {
             const response = await axios.patch(`/api/follow/following`, 
              {

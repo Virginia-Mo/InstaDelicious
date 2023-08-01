@@ -46,11 +46,10 @@ export async function PUT(request : Request,  { params }: { params: { id: string
                     postId: +params.id
                 },
                 data: {
-                amount : foundPost.amount -1,
+                amount : foundPost.amount - 1,
                 userslikes : {
                     set : newArray
-                }
-                }
+                }}
         })
         return NextResponse.json(minusLike)
 }
@@ -58,6 +57,21 @@ export async function PUT(request : Request,  { params }: { params: { id: string
          catch (error){
         console.log(error)
            return  NextResponse.json({message: 'Could not add like'})
+
+         }
+    }
+export async function GET(request : Request,  { params }: { params: { id: string }}) {
+        try {
+            const response = await prisma.likes.findUnique({
+                where: {
+                    postId: +params.id
+                }
+            })
+           return NextResponse.json(response)
+         }
+         catch (error){
+            console.log(error)
+           return  NextResponse.json({message: 'No likes found'})
 
          }
     }

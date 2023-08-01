@@ -24,9 +24,19 @@ export const AddPost = async (id: number, data : stateType) => {
         })
         
         if (response.status === 200) {
-            store.dispatch(fetchUser(id))
+            // store.dispatch(fetchUser(id))
         }
         return response
+    } catch (error) {
+        return error
+    }
+}
+
+export const getPosts = async () => {
+    try {
+        const response = await axios.get(`/api/posts`)
+        const data = await response.data
+        return data
     } catch (error) {
         return error
     }

@@ -2,17 +2,17 @@ import prisma from '@/prisma/client'
 import { NextResponse } from 'next/server'
 
 
-// export async function GET(request : Request) {
-//         try {
-//             const response = await prisma.comment.findMany()
-//            return NextResponse.json(response)
-//          }
-//          catch (error){
-//             console.log(error)
-//            return  NextResponse.json({message: 'No comments found'})
+export async function GET(request : Request) {
+        try {
+            const response = await prisma.post.findMany()
+           return NextResponse.json(response)
+         }
+         catch (error){
+            console.log(error)
+           return  NextResponse.json({message: 'No comments found'})
 
-//          }
-//     }
+         }
+    }
 
 interface RequestData {
     title: string,
