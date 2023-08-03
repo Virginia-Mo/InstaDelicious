@@ -5,30 +5,44 @@ import { Controller, useForm, useFieldArray } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object, string, mixed} from 'yup'
 import { Button, TextField} from '@mui/material'
-import Avatar from '@mui/material/Avatar';
 import { useAppSelector } from '@/types/reduxTypes'
 import { editProfile } from '@/async_calls/edit'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import * as yup from 'yup';
 
 const schema = object({
-    picture: mixed().required(),
-    title: string().required(),
-    details : mixed(),
-    ingredients : mixed(),
-    description : mixed()
+    image: mixed(),
+    title: string().required('Title is required').min(2, 'Title must be between 2 and 20 characters').max(20).trim(),
+    description : string().required('Description is required').min(2, 'Description must be between 2 and 20 characters').max(20).trim(),
+    ingredients : yup.array().of(
+        yup.object().shape({
+            ingredient: yup.string()})),
+    details : string(),
 }).required()
-
-interface optionsForm {
-  picture: string,
-  title: string,
-  details: string,
-  ingredients: string,
-  description: string
-}
+// const schema = yup
+//   .object()
+//   .shape({
+//      image: yup.mixed().required(),
+//     title: yup.string().required('Title is required').min(2, 'Title must be between 2 and 20 characters').max(20).trim(),
+//     description : yup.string().required('Description is required').min(2, 'Description must be between 2 and 20 characters').max(20).trim(),
+//     ingredients : yup.array().of(
+//         yup.object().shape({
+//           ingredient: yup.string()}))
+//    ,
+//     details : yup.string(),
+//   })
+//   .required();
+// interface optionsForm {
+//   image: string,
+//   title: string,
+//   details: string,
+//   ingredients: string,
+//   description: string
+// }
 
 const PostForm = () => {
     
-        const {register, handleSubmit, control, formState: { errors } } = useForm({
+        const { handleSubmit, control, formState: { errors } } = useForm({
             defaultValues: {
             ingredients: [{ingredient : ""}]
           },resolver: yupResolver(schema),
@@ -43,9 +57,9 @@ const PostForm = () => {
   const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
     const { data: session } = useSession()
 
-    const handleSubmitForm =  ( ) => {
+    const handleSubmitForm =  ( data : any, e : Event) => {
 
-        console.log("dfghn")
+        console.log("dfgv",data, file)
     //   let image
     //    if (file) {
     //   const formData = new FormData()
@@ -58,7 +72,7 @@ const PostForm = () => {
     //   if (fileData.secure_url) {
     //     image = fileData.secure_url
     //   }
-    //   console.log("picture", fileData.secure_url)
+    //   console.log("image", fileData.secure_url)
     // }
     //   const options : optionsForm = {
     //     url: file ? image : user.image,
@@ -87,9 +101,10 @@ const onChangeImage = (e: any) => {
          
   <input 
   type="file"
-  name="picture"
-  id="picture"
+  name="image"
+  id="image"
   onChange={onChangeImage} 
+  required
   />
    
    <Controller
@@ -102,12 +117,12 @@ const onChangeImage = (e: any) => {
         variant='outlined'
         label="Title"
         className='w-80'
-        // helperText={errors?.title ? errors?.title?.message : null} 
-        // error={errors?.title ? true : false}
+        helperText={errors?.title ? errors?.title?.message : null} 
+        error={errors?.title ? true : false}
     />  
 }/> 
 <Controller
-        name="details"
+        name="description"
         control={control}
         defaultValue=''
         render={({field}) => <TextField {...field}
@@ -116,8 +131,8 @@ const onChangeImage = (e: any) => {
         variant='outlined'
         label="Description"
         className='w-80'
-        // helperText={errors?.description ? errors?.description?.message : null} 
-        // error={errors?.description ? true : false}
+        helperText={errors?.description ? errors?.description?.message?.toString() : null} 
+        error={errors?.description ? true : false}
     />  
 }/> 
 
@@ -139,8 +154,8 @@ const onChangeImage = (e: any) => {
               variant='outlined'
               label="Ingredient"
               className='w-80'
-            //   helperText={errors?.ingredient ? errors?.ingredients?.message : null} 
-            //   error={errors?.ingredients ? true : false}
+              helperText={errors?.ingredients ? errors?.ingredients?.message?.toString() : null} 
+              error={errors?.ingredients ? true : false}
           />  
       }/> 
 
@@ -156,7 +171,7 @@ const onChangeImage = (e: any) => {
 
 
 <Controller
-        name="description"
+        name="details"
         control={control}
         defaultValue=''
         render={({field}) => <TextField {...field}
@@ -165,13 +180,12 @@ const onChangeImage = (e: any) => {
         variant='outlined'
         label="Step to step"
         className='w-80'
-        // helperText={errors?.details ? errors?.details?.message : null} 
-        // error={errors?.details ? true : false}
+        helperText={errors?.details ? errors?.details?.message?.toString() : null} 
+        error={errors?.details ? true : false}
     />  
 }/> 
 
-
-<Button type='submit' variant='outlined' className='w-80'>Submit here</Button>
+<Button type='submit' variant='outlined' className='w-80'>Submit</Button>
 </div>
 
     </form>
