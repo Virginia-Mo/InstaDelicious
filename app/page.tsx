@@ -30,7 +30,7 @@ const dispatch = useAppDispatch()
         <LoginForm />
         
         </section>
-          </div>}
+          </div>} 
        
         </main>
          }

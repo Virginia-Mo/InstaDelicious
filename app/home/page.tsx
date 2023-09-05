@@ -16,8 +16,6 @@ import { GetFollow } from '@/components/utils/follow'
 export default function Home() {
   const { data: session, status } = useSession()
 
-
-
   const dispatch = useAppDispatch()
   const id  = session?.user.userData.id as number
 
@@ -55,7 +53,7 @@ export default function Home() {
   return (
     <div>
   { (user && following) &&   
-    <div className='text-black flex w-full gap-10 h-screen justify-between mt-4'>
+    <div className='text-black flex w-full gap-10 h-screen justify-between'>
         <Navbar />
         {user !== null && Object.keys(user).length > 0 &&
         <><section className=' overflow-auto section-scroll grow'>

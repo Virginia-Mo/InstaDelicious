@@ -172,7 +172,7 @@ if (status === "unauthenticated") {
   
     <div className='flex h-screen'>
      <Navbar />
-    <div className='grow flex justify-center mt-10'>
+    <div className='flex justify-center mt-10  overflow-auto section-scroll grow'>
     <main className='pd-6 w-7/12'>
       <section className='flex text-2xl gap-32 pb-16 border border-transparent border-b-red-300 mb-2'>
         <div>

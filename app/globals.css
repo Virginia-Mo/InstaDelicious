@@ -33,3 +33,12 @@ body {
 .CardA {
   margin : 0 auto
 }
+.swiper-button-next {
+  color : #e96990
+}
+.button_file {
+  margin : 50% auto
+}
+.img_post {
+  height : 30rem;
+}

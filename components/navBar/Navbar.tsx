@@ -15,6 +15,7 @@ import PostForm from '../forms/postForm';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import { Box } from '@mui/material';
+import styles from './navbar.module.css'
 
 const Navbar = () => {
   const dispatch = useAppDispatch()
@@ -28,14 +29,12 @@ const Navbar = () => {
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
-console.log(openModal)
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,
@@ -50,7 +49,7 @@ const style = {
           <li><Link href={`/profile/${user.id}`}><AccountCircleIcon fontSize="large" />  Profile </Link> </li>
           <li className='cursor-pointer' onClick={handleOpen}><AddAPhotoIcon fontSize="large"  /> Add a post</li>
         </ul>
-        <p className='absolute left-0 bottom-0 px-4' onClick={handleLogOut}><LogoutIcon fontSize='large' /> Log Out </p>
+        <p className='absolute left-0 bottom-0 px-4 hover:bg-pink-200 rounded-lg' onClick={handleLogOut}><LogoutIcon fontSize='large' /> Log Out </p>
       </nav>
     </aside>
     <Modal
@@ -59,7 +58,7 @@ const style = {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style}>
+      <Box sx={style} className={styles.boxPost}>
       <PostForm />
       </Box>
       </Modal></>

@@ -26,7 +26,7 @@ export async function POST( request : Request) {
             follow: true,
         }
     })
-    const checkPassword = await bcrypt.compare(body.password, user?.password)
+    const checkPassword : string = await bcrypt.compare(body.password, user?.password)
     console.log(checkPassword)
     if (user && checkPassword){
         const {password, ...userData} = user
