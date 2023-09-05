@@ -27,6 +27,7 @@ export async function POST( request : Request) {
         }
     })
     const checkPassword = await bcrypt.compare(body.password, user?.password)
+    console.log(checkPassword)
     if (user && checkPassword){
         const {password, ...userData} = user
         
@@ -35,8 +36,9 @@ export async function POST( request : Request) {
             userData,
             accessToken
     }
-    
        return new Response(JSON.stringify(result))
 
-    } else return new Response (JSON.stringify({message: 'Invalid email or password'}))
+    } 
+    // return new Response (JSON.stringify({message: 'Invalid email or password'}))
 }
+//try catch

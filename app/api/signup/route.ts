@@ -62,7 +62,7 @@ export async function POST(req: Request) {
         if (!user) {
             throw new Error('Unable to create user')
         }  
-        return NextResponse.json({message : 'Your account has been created successfully, you can now login ! '})
+        return NextResponse.json({message : 'Your account has been created successfully, you can now log in ! '})
     }
     catch (error){
         console.log(error)

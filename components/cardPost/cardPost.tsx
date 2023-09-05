@@ -18,8 +18,6 @@ import { Post, UserDB } from '@/types/models';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { useAppSelector } from '@/types/reduxTypes';
 import { AddLikes, MinusLikes } from '@/async_calls/likes';
-import { redirect } from 'next/navigation';
-import { set } from 'react-hook-form';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -39,7 +37,7 @@ export default function CardPost({post} : {post: Post}) {
   const [expanded, setExpanded] = React.useState(false);
   const [like, setLike] = React.useState(false);
   const [like2, setLike2] = React.useState(true);
-
+ 
 
   const handleExpandClick = () => {
     setExpanded(!expanded);

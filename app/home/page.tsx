@@ -42,7 +42,6 @@ export default function Home() {
       getConnectedUser(id)
   }, [])
 
-
   const followingPost = following?.map((user) => user.posts)
   const fArray = followingPost?.flat()
   const sortedArray = fArray?.sort((a, b) => b.id - a.id) 

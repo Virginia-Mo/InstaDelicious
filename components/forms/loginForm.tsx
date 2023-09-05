@@ -6,6 +6,9 @@ import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object, string } from 'yup'
 import { Button, TextField} from '@mui/material'
+import { getMessage } from '@/redux/reducers/message'
+import { useAppDispatch, useAppSelector } from '@/types/reduxTypes'
+import { Alert, AlertTitle } from '@mui/material'
 
 const schema = object({
     email: string().required('Email is required').email('Email is invalid').trim(),
@@ -13,14 +16,23 @@ const schema = object({
 }).required()
 
 const LoginForm = () => {
+  const dispatch = useAppDispatch()
+  const message : string = useAppSelector((state) => state.persistedReducer.message.message)
 
     const { handleSubmit, control, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     })
     const onSubmit = (data: any) => {
-       signIn('credentials', {email: data.email, password: data.password, redirect : false})
-    }
-
+       signIn('credentials', {email: data.email, password: data.password, redirect : false}).then(({  error }) => {
+        if (error) {
+          dispatch(getMessage("Wrong password or email"))
+          setTimeout(() => {
+             dispatch(getMessage(""))
+             }, 3500);
+            // toast("Credentials do not match!", { type: "error" });
+        }
+    })}
+  
   return (
     <>
       <h2 className='text-center text-black font-sans font-bold text-5xl '>InstaDelicious</h2>
@@ -55,7 +67,14 @@ const LoginForm = () => {
         error={errors?.password ? true : false}
         placeholder='Enter your password'/> 
   }
-/> <div className='mt-8'>
+ 
+/> { message &&
+    <div className=' flex justify-center items-center mt-2'>
+    <Alert severity="error" >
+    {message}
+    </Alert>
+    </div>} 
+    <div className='mt-8'>
    <Button type='submit' variant='outlined' className='w-80'>Login</Button></div>
    </div>
    <div className='border-gray-200 border-2 rounded-lg w-full pb-5'>

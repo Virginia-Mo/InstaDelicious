@@ -58,9 +58,7 @@ const PostForm = () => {
 
     const handleSubmitForm =  async ( data : any, e : Event) => {
         
-        console.log("dfgv",data, file)
-        const ingredientsArray : string[] = data.ingredients.map((ingredient: { ingredient: string }) => ingredient.ingredient)
-        console.log("ingDatas", ingredientsArray)
+      const ingredientsArray : string[] = data.ingredients.map((ingredient: { ingredient: string }) => ingredient.ingredient)
 
       let image
         if (file) {
