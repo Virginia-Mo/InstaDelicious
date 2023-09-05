@@ -72,7 +72,7 @@ export async function PUT(req: Request) {
         }
         })
         if (!user) {
-            throw new Error('Unable to updatee user')
+            throw new Error('Unable to update user')
         }  
         return NextResponse.json({message : 'Your account has been updated successfully ! '})
     }

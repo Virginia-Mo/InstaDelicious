@@ -9,36 +9,35 @@ import { useAppSelector } from '@/types/reduxTypes'
 import { editProfile } from '@/async_calls/edit'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import * as yup from 'yup';
+import { AddPost } from '@/async_calls/posts'
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+import { Navigation } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation'
 
 const schema = object({
     image: mixed(),
-    title: string().required('Title is required').min(2, 'Title must be between 2 and 20 characters').max(20).trim(),
-    description : string().required('Description is required').min(2, 'Description must be between 2 and 20 characters').max(20).trim(),
+    title: string().required('Title is required').min(2, 'Title must be between 2 and 20 characters'),
+    description : string().required('Description is required').min(2, 'Description must be between 2 and 20 characters'),
     ingredients : yup.array().of(
         yup.object().shape({
             ingredient: yup.string()})),
     details : string(),
 }).required()
-// const schema = yup
-//   .object()
-//   .shape({
-//      image: yup.mixed().required(),
-//     title: yup.string().required('Title is required').min(2, 'Title must be between 2 and 20 characters').max(20).trim(),
-//     description : yup.string().required('Description is required').min(2, 'Description must be between 2 and 20 characters').max(20).trim(),
-//     ingredients : yup.array().of(
-//         yup.object().shape({
-//           ingredient: yup.string()}))
-//    ,
-//     details : yup.string(),
-//   })
-//   .required();
-// interface optionsForm {
-//   image: string,
-//   title: string,
-//   details: string,
-//   ingredients: string,
-//   description: string
-// }
+
+interface optionsForm {
+    url: any,
+    title: string,
+    description: string,
+    ingredients: string[],
+    details: string,
+    token: string,
+    authorId: number
+  }
 
 const PostForm = () => {
     
@@ -57,34 +56,36 @@ const PostForm = () => {
   const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
     const { data: session } = useSession()
 
-    const handleSubmitForm =  ( data : any, e : Event) => {
-
+    const handleSubmitForm =  async ( data : any, e : Event) => {
+        
         console.log("dfgv",data, file)
-    //   let image
-    //    if (file) {
-    //   const formData = new FormData()
-    //   formData.append('file', file)
-    //   formData.append("upload_preset", "Instadelicious");
-    //   const fileData = await fetch(`https://api.cloudinary.com/v1_1/dps629xiv/image/upload`, {
-    //     method: "POST",
-    //     body: formData
-    //   }) .then((res) => res.json())
-    //   if (fileData.secure_url) {
-    //     image = fileData.secure_url
-    //   }
-    //   console.log("image", fileData.secure_url)
-    // }
-    //   const options : optionsForm = {
-    //     url: file ? image : user.image,
-    //     title: data.bio,
-    //     details: user.email,
-    //     ingredients : user.id,
-    //     description : "here",
-    //     token : session?.user.accessToken as string,
-    //     authorId : 2,
+        const ingredientsArray : string[] = data.ingredients.map((ingredient: { ingredient: string }) => ingredient.ingredient)
+        console.log("ingDatas", ingredientsArray)
 
-    //   }
-    //     editProfile(options)
+      let image
+        if (file) {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append("upload_preset", "Instadelicious");
+      const fileData = await fetch(`https://api.cloudinary.com/v1_1/dps629xiv/image/upload`, {
+        method: "POST",
+        body: formData
+      }) .then((res) => res.json())
+      if (fileData.secure_url) {
+        image = fileData.secure_url
+      }
+    }
+      const options : optionsForm = {
+        url: image,
+        title: data.title,
+        description: data.description,
+        ingredients : ingredientsArray,
+        details : data.details,
+        token : session?.user.accessToken as string,
+        authorId : user.id,
+      }
+      console.log(options)
+        AddPost(options)
   }
 
 const onChangeImage = (e: any) => {
@@ -94,20 +95,34 @@ const onChangeImage = (e: any) => {
 }
 
   return (
-
-<form action="" onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-7 items-center'>
-      <div className='border-gray-200 border-2 rounded-lg flex flex-col gap-8 items-end px-5 py-4'>
-       
-         
+      <form action="" onSubmit={handleSubmit(handleSubmitForm)} className='flex flex-col gap-7 items-center'>
+          <Swiper
+            slidesPerView={1}
+            modules={[Navigation]}
+            className='w-full'
+          >
+      <div className='border-gray-200 border-2 rounded-lg flex flex-col gap-8 items-end px-5 py-4'> 
+      <SwiperSlide>
+<div>
+      <Button
+  variant="contained"
+  component="label"
+>
+  Upload File
   <input 
   type="file"
   name="image"
   id="image"
   onChange={onChangeImage} 
   required
+  hidden
   />
-   
-   <Controller
+</Button>  
+ 
+</div>
+      </SwiperSlide>
+      <SwiperSlide>
+      <Controller
         name="title"
         control={control}
         defaultValue=''
@@ -126,9 +141,8 @@ const onChangeImage = (e: any) => {
         control={control}
         defaultValue=''
         render={({field}) => <TextField {...field}
+        multiline
         id='description'
-        type='text'
-        variant='outlined'
         label="Description"
         className='w-80'
         helperText={errors?.description ? errors?.description?.message?.toString() : null} 
@@ -175,9 +189,10 @@ const onChangeImage = (e: any) => {
         control={control}
         defaultValue=''
         render={({field}) => <TextField {...field}
+        multiline
         id='details'
-        type='text'
         variant='outlined'
+        aria-label='Step to Step'
         label="Step to step"
         className='w-80'
         helperText={errors?.details ? errors?.details?.message?.toString() : null} 
@@ -185,10 +200,14 @@ const onChangeImage = (e: any) => {
     />  
 }/> 
 
-<Button type='submit' variant='outlined' className='w-80'>Submit</Button>
-</div>
+<Button type='submit'  variant='outlined' className='w-80'>Submit</Button>
+      </SwiperSlide>
 
-    </form>
+</div> 
+    </Swiper>
+
+</form>
+
   )
 }
 

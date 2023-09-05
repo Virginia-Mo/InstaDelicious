@@ -24,6 +24,7 @@ interface RequestData {
   }
 export async function POST(request : Request) {
   const body : RequestData = await request.json()
+  console.log(body)
       try {
           const response = await prisma.post.create({
               data : {
@@ -41,12 +42,11 @@ export async function POST(request : Request) {
                     amount: 0,
                     postId: response.id
           }})
-         return NextResponse.json(addLike)
+          return NextResponse.json({message : 'Your post has been created successfully ! '})
        }
       }
        catch (error){
           console.log(error)
-         return  NextResponse.json({message: 'Unable to create post'})
-
+          return error
        }
   }

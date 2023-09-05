@@ -3,7 +3,8 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 
 const initialState = {
-    message : ""
+    message : "",
+    errorMessage : "",
 };
 
 export const messageSlice = createSlice({
@@ -13,6 +14,9 @@ export const messageSlice = createSlice({
         getMessage : (state, action: PayloadAction<string>) => {
             state.message = action.payload
         },
+        getErrorMessage : (state, action: PayloadAction<string>) => {
+            state.errorMessage = action.payload
+        }
        },
     extraReducers: (builder) => {
         // builder.addCase(fetchmessages.fulfilled, (state, action: PayloadAction<message[]>)  => {

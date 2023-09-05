@@ -2,14 +2,16 @@
 
 import { AddPost } from '@/async_calls/posts'
 import React from 'react'
+import { Alert, AlertTitle } from '@mui/material'
 import { useAppSelector } from '@/types/reduxTypes'
+import { useSession } from 'next-auth/react'
 import PostForm from '@/components/forms/postForm'
 
 
 const About = () => {
   
 const user  = useAppSelector((state) => state.persistedReducer.user.onlineUser)
-
+const message = useAppSelector((state) => state.persistedReducer.message.message)
   // const [state, setState] = React.useState({
   //   title: '',
   //   description: '',
@@ -30,6 +32,13 @@ const user  = useAppSelector((state) => state.persistedReducer.user.onlineUser)
   //   console.log(data)
   //   AddPost(user.id, data)
   // }
+  const { status } = useSession()
+  if (status === "loading") {
+    return <p>Loading...</p>
+  }
+  if (status === "unauthenticated") {
+    return <p>Access Denied</p>
+  }
   return (
     <div>
        <h1>HAY {user.username}</h1> 
@@ -46,8 +55,16 @@ const user  = useAppSelector((state) => state.persistedReducer.user.onlineUser)
 <input className='text-pink-300' value={state.url} onChange={(e)=> changeInput(e)} type="text" name="url" id="" />
 <button type="submit" className="joinclass__btn btnSubmit">Send Message</button>
        </form> */}
-
+{!message &&
 <PostForm />
+}
+
+{message &&
+      <div className='flex pl-5 items-center'>
+      <Alert severity="success" >
+        <AlertTitle>Success ! </AlertTitle> {message}
+      </Alert>
+      </div>}
 
     </div>
   )
