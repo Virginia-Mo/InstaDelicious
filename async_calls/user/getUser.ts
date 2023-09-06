@@ -27,13 +27,3 @@ export async function getUsers (){
         return error
     }
   }
-
-// export async function GetAllUserFollowers (id: number) {
-//     const user : UserDB = useAppSelector((state) => state.persistedReducer.user.user)
-//     try {
-//        if (user.follow) {
-//        console.log("USER FOLLOW", user.follow)}
-//     } catch (error) {
-//         return error
-//     }
-// }

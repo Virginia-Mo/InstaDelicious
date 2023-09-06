@@ -72,3 +72,24 @@ export async function editProfile (data : stateType2) {
       return error
   }
     }
+export async function deleteAccount (data : stateType) {
+    try {
+      const response = await axios.delete(`/api/edit`, 
+       {
+          email : data.email,
+      },
+      { headers : {
+        Authorization : `Bearer ${data.token}`}
+       })
+      if (response.status === 200) {
+        getConnectedUser(data.id)
+        store.dispatch(getMessage(response.data.message))
+        setTimeout(() => {
+           store.dispatch(getMessage(""))
+           }, 2500);
+      }
+      return response
+  } catch (error) {
+      return error
+  }
+    }

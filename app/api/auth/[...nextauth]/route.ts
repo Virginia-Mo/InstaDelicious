@@ -12,15 +12,18 @@ export const authOptions = {
   // Configure one or more authentication providers
   providers: [
     CredentialsProvider({
-      name: "",
+      id: "credentials",
+      name: "credentials",
       credentials: {},
+      
       async authorize(credentials: Credentials, req: RequestInternal) {
         const res = await axios.post("http://localhost:3000/api/login", {
           email: credentials.email,
           password: credentials.password,
         });
         const user: User = await res.data;
-        if (user) {
+        if (user) { 
+          console.log(user)
           return user;
         } else {
           return null;
@@ -29,10 +32,10 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token , user } : {  token : any, user : any }) {
       return { ...token, ...user };
     },
-    async session({ session, token }) {
+    async session({ session, token }: {  session : any, token : any }) {
       session.user = token as any;
       return session;
     },

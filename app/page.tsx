@@ -9,8 +9,6 @@ import { useAppDispatch, useAppSelector } from '@/types/reduxTypes'
 export default function FirstPage() {
 const dispatch = useAppDispatch()
     const { data: session } = useSession()
-    console.log(session)
-  
     const user = useAppSelector((state) => state.persistedReducer.user.user)
   return (
   <>

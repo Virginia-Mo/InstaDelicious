@@ -24,7 +24,6 @@ interface RequestData {
   }
 export async function POST(request : Request) {
   const body : RequestData = await request.json()
-  console.log(body)
       try {
           const response = await prisma.post.create({
               data : {

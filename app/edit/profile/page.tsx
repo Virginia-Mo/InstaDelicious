@@ -23,7 +23,6 @@ const Settings = () => {
   if (status === "unauthenticated") {
     return <p>Access Denied</p>
   }
-  console.log("user", message)
   return (
     <div className='flex h-full'>
         <Navbar />

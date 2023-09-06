@@ -16,6 +16,7 @@ import Link from 'next/link';
 import SettingForm from '../forms/settingForm';
 import settingsInfosForm from '../forms/settingInfosForm';
 import SettingsInfosForm from '../forms/settingInfosForm';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 
 export default function SettingsMenu() {
@@ -54,6 +55,16 @@ export default function SettingsMenu() {
               </ListItemIcon>
               <Link href={`/edit/settings`}>
               <ListItemText primary="Settings" />
+              </Link>
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <CancelIcon />
+              </ListItemIcon>
+              <Link href={`/edit/delete`}>
+              <ListItemText primary="Delete Profile" />
               </Link>
             </ListItemButton>
           </ListItem>

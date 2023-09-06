@@ -13,6 +13,7 @@ import { AddPost } from "@/async_calls/posts";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import {Alert} from "@mui/material";
 
 import { Navigation } from "swiper/modules";
 
@@ -64,6 +65,8 @@ const PostForm = () => {
   });
 
   const [file, setFile] = useState(null);
+  const message : string = useAppSelector((state) => state.persistedReducer.message.message)
+
   const user = useAppSelector(
     (state) => state.persistedReducer.user.onlineUser
   );
@@ -99,19 +102,24 @@ const PostForm = () => {
       token: session?.user.accessToken as string,
       authorId: user.id,
     };
-    console.log(options);
     AddPost(options);
   };
 
   const onChangeImage = (e: any) => {
     const file = e.target.files[0];
     setFile(file);
-
-    console.log(file);
   };
 
   return (
-    <form
+    <div>
+    {message &&
+      <div className=' flex justify-center items-center'>
+      <Alert severity="success" variant='filled'>
+       {message}
+      </Alert>
+      </div>}
+      { !message && 
+      <form
       action=""
       onSubmit={handleSubmit(handleSubmitForm)}
       className="flex flex-col gap-7 items-center h-full "
@@ -132,17 +140,18 @@ const PostForm = () => {
                     alt="selected image"
                     className="img_post"
                   />
-                  <Button variant="contained" component="label">
+                  <Button variant="contained" 
+                    component="label"
+                    startIcon={<CloudUploadIcon />}>
                     Upload File
                     <input
                       type="file"
                       name="image"
                       id="image"
                       onChange={onChangeImage}
-                      required
                       hidden
                     />
-                  </Button>{" "}
+                  </Button>
                 </div>
               )}
               {!file && (
@@ -150,7 +159,6 @@ const PostForm = () => {
                   <Button
                     variant="contained"
                     component="label"
-                    className=""
                     startIcon={<CloudUploadIcon />}
                   >
                     Upload File
@@ -283,6 +291,9 @@ const PostForm = () => {
         </div>
       </Swiper>
     </form>
+      }
+   
+    </div>
   );
 };
 

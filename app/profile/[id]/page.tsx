@@ -39,7 +39,6 @@ const style = {
 
 export default function Profile ({ params }: { params: { id: number } }) {
   const { status } = useSession()
-  console.log(status)
   const dispatch = useAppDispatch()
   
   const users = useAppSelector((state) => state.persistedReducer.user.users)
@@ -60,7 +59,6 @@ export default function Profile ({ params }: { params: { id: number } }) {
 
   
   function getUserFollower (userInf : UserDB)  {
-    console.log("GO", userInf)
         let followerArray : UserDB[] = []
         let followingArray : UserDB[] = []
         if (userInf !== undefined) {
@@ -68,11 +66,9 @@ export default function Profile ({ params }: { params: { id: number } }) {
             dispatch(getFollowers())
             dispatch(getFollowing())
           } else {
-        console.log("qsdf", userInf.follow[0].follower_user_id)
         let followerInfo : number[] = userInf.follow[0].follower_user_id  
         let followingInfo : number[] = userInf.follow[0].following_user_id
 
-    console.log("ici",followerInfo , "la")
         if (userInf.follow[0].follower_user_id.length > 0) {
           userInf.follow[0].follower_user_id.forEach((element : number) => {
             let foundPeople =  users.find((user) => user.id === element)
@@ -147,7 +143,6 @@ const editFollow = async(bool : boolean, res : Response) => {
   if (res.status === 200){
     setFollowing(bool)
      const usersCall  = await getUsers()
-     console.log("CALL2", usersCall)
      if (usersCall.length >0 ){
        foundUser = usersCall.find((user : UserDB) => user.id === id)
         getUserFollower(foundUser)

@@ -10,31 +10,19 @@ import { getMessage } from "@/redux/reducers/message";
 import { useAppDispatch, useAppSelector } from "@/types/reduxTypes";
 import { Alert } from "@mui/material";
 
-const schema = object({
-  email: string()
-    .required("Email is required")
-    .email("Email is invalid")
-    .trim(),
-  password: string()
-    .required("Password is required")
-    .min(5, "Password must between 6 and 20 characters")
-    .max(20, "Password must between 6 and 20 characters")
-    .trim(),
-}).required();
+const schema = object({ email: string().required("Email is required").email("Email is invalid").trim(),
+  password: string().required("Password is required").min(5, "Password must between 6 and 20 characters").max(20, "Password must between 6 and 20 characters").trim()}).required();
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
-  const message: string = useAppSelector(
-    (state) => state.persistedReducer.message.message
-  );
+  const message: string = useAppSelector((state) => state.persistedReducer.message.message );
 
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
+  } = useForm({resolver: yupResolver(schema)});
+
   const onSubmit = (data: any) => {
     signIn("credentials", {
       email: data.email,
@@ -57,7 +45,6 @@ const LoginForm = () => {
         InstaDelicious
       </h2>
       <form
-        action=""
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-7 items-center py-10"
       >
@@ -91,13 +78,13 @@ const LoginForm = () => {
                 type="password"
                 variant="standard"
                 label="Password"
-                className="w-80 "
+                className="w-80"
                 helperText={errors?.password ? errors?.password?.message : null}
                 error={errors?.password ? true : false}
                 placeholder="Enter your password"
               />
             )}
-          />{" "}
+          />
           {message && (
             <div className=" flex justify-center items-center mt-2">
               <Alert severity="error">{message}</Alert>
@@ -113,14 +100,16 @@ const LoginForm = () => {
           <p className="text-black py-3 font-mono">
             You don't have an account ?
           </p>
+          <div className="w-full mx-auto my-0">
           <Button
             type="submit"
             variant="outlined"
-            className="mt-10 w-80"
+            className="w-80"
             color="secondary"
           >
             <Link href="/signup">Sign up</Link>
           </Button>
+          </div>
         </div>
       </form>
     </>

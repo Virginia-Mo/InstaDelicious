@@ -6,6 +6,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ref } from "yup";
 import { Button, TextField } from "@mui/material";
 import { AddNewUser } from "@/async_calls/user/newUser";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
 
 const schema = object({
   username: string()
@@ -34,11 +36,12 @@ interface dataForm {
   email: string;
   password: string;
   confirmPassword: string;
-  picture: string;
+  picture: any;
 }
 
 const SignupForm = () => {
   const [error, setError] = useState("");
+  const [file, setFile] = useState(null);
 
   const {
     handleSubmit,
@@ -47,8 +50,37 @@ const SignupForm = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const onSubmit = (data: dataForm) => {
-    AddNewUser(data);
+
+  const onChangeImage = (e: any) => {
+    const file = e.target.files[0];
+    setFile(file);
+  };
+  const onSubmit = async (data: dataForm) => {
+    
+    let image;
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "Instadelicious");
+      const fileData = await fetch(
+        `https://api.cloudinary.com/v1_1/dps629xiv/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      ).then((res) => res.json());
+      if (fileData.secure_url) {
+        image = fileData.secure_url;
+      }
+    }
+    const options: dataForm = {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+      picture: image,
+    };
+    AddNewUser(options);
   };
 
   return (
@@ -64,7 +96,7 @@ const SignupForm = () => {
         className="flex flex-col gap-7 w-1/3 items-center border-gray-200 border-2 rounded-lg py-4"
       >
         <h2 className="text-center text-black font-bold text-3xl mt-4 font-mono">
-          Create your account{" "}
+          Create your account
         </h2>
         <Controller
           name="username"
@@ -138,21 +170,33 @@ const SignupForm = () => {
             />
           )}
         />
-        <Controller
-          name="picture"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <TextField
-              {...field}
-              id="picture"
-              type="text"
-              variant="standard"
-              label="Choose your profile picture"
-              className="w-80 "
-            />
-          )}
-        />
+  <div className="flex gap-2">
+    <div className="flex items-center">
+                  <Button
+                    variant="contained"
+                    component="label"
+                    className="h-min" 
+                    startIcon={<CloudUploadIcon />}
+                  >
+                    Profile photo
+                    <input
+                    
+                      type="file"
+                      name="image"
+                      id="image"
+                      onChange={onChangeImage}
+                      required
+                      hidden
+                    />
+                  </Button>
+ </div>               
+{ file && 
+                  <img
+                  src={URL.createObjectURL(file)}
+                  alt="selected image"
+                  className="img_profile"
+                /> }
+                </div>
         <Button type="submit" variant="outlined" className="mt-10 w-80">
           Submit
         </Button>
