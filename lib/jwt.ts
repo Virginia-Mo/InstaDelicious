@@ -13,6 +13,7 @@ export function signJwtAccess(payload: JwtPayload, options: SignOption = DEFAULT
     const token = jwt.sign(payload, secret_key!, options)
     return token
 }
+
 export function verifyJwt(token:string){
     try {
         const secret_key = process.env.SECRET_KEY

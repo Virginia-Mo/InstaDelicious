@@ -1,16 +1,16 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { use, useEffect } from 'react'
 import Link from 'next/link';
 import { useAppSelector, useAppDispatch } from '@/types/reduxTypes'
 import { Post, UserDB } from '@/types/models'
 import { getFollowers, getFollowing } from '@/redux/reducers/users'
 import { AddFollowing, MinusFollowing } from '@/async_calls/follower';
-import { getUsers } from '@/async_calls/user/getUser';
+import { getConnectedUser, getUsers } from '@/async_calls/user/getUser';
 import { useSession } from 'next-auth/react'
 import Navbar from '@/components/navBar/Navbar'
 import BigAvatars from '@/components/avatar/bigavatar'
-
+import { useRouter } from 'next/navigation'
 
 import  Dialog  from '@mui/material/Dialog'
 import Box from '@mui/material/Box';
@@ -23,7 +23,11 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import BadgeAvatars from '@/components/avatar/avatar';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
+import { deletePost, getPosts } from '@/async_calls/posts';
+import { Alert } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -38,14 +42,15 @@ const style = {
 
 
 export default function Profile ({ params }: { params: { id: number } }) {
-  const { status } = useSession()
+  const { data: session, status } = useSession()
   const dispatch = useAppDispatch()
-  
+  const router = useRouter()
   const users = useAppSelector((state) => state.persistedReducer.user.users)
   const followers = useAppSelector((state) => state.persistedReducer.user.followers)
   const following = useAppSelector((state) => state.persistedReducer.user.following)
   const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
   const onlineUserFollowing  = useAppSelector((state) => state.persistedReducer.user.onlineUserFollowing)
+  const message = useAppSelector((state) => state.persistedReducer.message.message)
   
   const [open, setOpen] = React.useState(false);
   const [selectedPost, setselectedPost] = React.useState('' as any)
@@ -53,7 +58,7 @@ export default function Profile ({ params }: { params: { id: number } }) {
   const [followings, setFollowing] = React.useState(true);
   const [openFollowBox, setOpenFollowBox] = React.useState(false)
   const [openFollowBox2, setOpenFollowBox2] = React.useState(false)
-
+  
   const id = +params.id
   let foundUser  = users.find((user) => user.id === id)
 
@@ -103,7 +108,6 @@ let foundFollower = onlineUserFollowing.some((item)=> item.id === foundUser?.id)
   } else {
     setFollowing(false)
   }
-  
 },[])
 
   useEffect(() => {
@@ -111,6 +115,14 @@ let foundFollower = onlineUserFollowing.some((item)=> item.id === foundUser?.id)
     getUserFollower(foundUser)
   }
   }, [user])
+
+useEffect(() => {
+  if (message){
+    setTimeout(() => {
+      handleClose()
+    }, 1000)
+  }
+}, [message])
 
 const handleOpen = (post : Post) => {
   setSelectedImg('')
@@ -157,6 +169,20 @@ const removeFollow = async(userPage : UserDB, userOnline : UserDB) => {
   const response : Response  =  await MinusFollowing(userPage?.id, userOnline.id)
     editFollow(false, response)
 }
+
+const handleDelete = async (id : number) => {
+  const datas = {
+    id: id,
+    token: session?.user.accessToken as string,
+  }
+  const res : Response = await deletePost(datas)
+  if (res.status === 200) {
+    setTimeout(() => {
+   router.push(`/home`)
+    }, 1500)
+  }
+  }
+ 
 if (status === "loading"){
   return <p>loading</p>
 }
@@ -271,19 +297,44 @@ if (status === "unauthenticated") {
           </section>
       <section className='flex flex-wrap gap-2 '>
       {foundUser?.posts.map((post) => (
-        <><article key={post.id} className='w-80 h-80' onClick={() => handleOpen(post)}>
-          <img src={post.url} alt="" className='h-full w-full' />
+        <div key={post.id}><article  className='relative w-80 h-80' onClick={() => handleOpen(post)}>
+          <img src={post.url} alt="" className=' h-full w-full' />
+           
        </article>
-</>))}       <Modal
+</div>))}       <Modal
           open={open}
           onClose={handleClose} 
           // aria-labelledby="modal-modal-title"
           // aria-describedby="modal-modal-description"
-        ><Box sx={style} className="flex">
-          <div className='flex' >
-            <div className='w-5/6 flex'>
-              <img src={selectedImg} alt="" className='h-full w-full' /></div>
-              <p className='text-black w-3/12 bg-white py-3 px-2'>{selectedPost.details}</p></div>
+        >
+      <Box sx={style} className="flex">
+          <div className='flex  h-4/6' >
+            <div className='w-8/12 flex'>
+              <img src={selectedImg} alt="" className='' />
+              </div>
+              <div className='text-white bg-gray-800 relative grow p-2'>
+                <div className='flex'>
+              <Avatar alt={foundUser?.username} src={foundUser?.picture} sx={{ width: 45, height: 45}} />
+              <p className='font-semibold flex items-center ml-2'>{foundUser?.username}</p>
+              </div>
+              {/* <BadgeAvatars user={foundUser} /> */}
+              <div className='border-t-red-100 border-t my-4 pt-4'>
+              <div className='flex items-center'>
+              <Avatar alt={foundUser?.username} src={foundUser?.picture} sx={{ width: 45, height: 45}} />
+              <p className='font-semibold flex ml-2'>{foundUser?.username}</p>
+             
+              <p className='py-3 px-2 '>{selectedPost.title}</p> </div>
+             { (foundUser?.id === user.id) && 
+                <DeleteIcon color="primary" fontSize="large" className='absolute top-2 right-2' onClick={() => handleDelete(selectedPost.id)}/>
+             }</div>
+              </div>
+              </div>
+    {message &&
+      <div className=' flex justify-center items-center'>
+      <Alert severity="success" variant='filled'>
+       {message}
+      </Alert></div>
+      }
             </Box>
           </Modal> 
       </section>

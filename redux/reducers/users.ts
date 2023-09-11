@@ -58,6 +58,9 @@ export const userSlice = createSlice({
         setOnline : (state, action : PayloadAction<boolean>) => {
             state.online = action.payload
         },
+        removeCurrentUser: (state, action: PayloadAction) => {
+            return initialState
+          },
        },
     extraReducers: (builder) => {
         // builder.addCase(fetchUsers.fulfilled, (state, action) => {
@@ -69,6 +72,6 @@ export const userSlice = createSlice({
         // })
         }
 })
-export const { getUser, setOnline, getAllUsers, getFollowers, getFollowing, getOnlineUser, getOnlineUserFollower, getOnlineUserFollowing} =  userSlice.actions;
+export const { getUser, setOnline, getAllUsers, getFollowers, getFollowing, getOnlineUser, getOnlineUserFollower, getOnlineUserFollowing, removeCurrentUser} =  userSlice.actions;
 
 export default userSlice; 

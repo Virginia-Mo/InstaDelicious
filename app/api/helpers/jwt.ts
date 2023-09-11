@@ -7,6 +7,7 @@ export async function handleToken(req : Request){
     const token = req.headers.get('Authorization');
     const filteredToken = token?.replace(/^Bearer\s/, '');
     // const ddbToken = await getToken({ req, secret })
-    const allowed = verifyJwt(filteredToken)
+    
+    const allowed = verifyJwt(filteredToken as string)
     return allowed
 }

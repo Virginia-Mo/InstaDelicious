@@ -7,7 +7,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { signOut } from 'next-auth/react';
 import { useAppDispatch, useAppSelector } from '@/types/reduxTypes';
-import {getUser, setOnline} from '@/redux/reducers/users';
+import {getUser, removeCurrentUser, setOnline} from '@/redux/reducers/users';
 import { redirect } from 'next/navigation'
 import Link from 'next/link';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
@@ -21,10 +21,9 @@ const Navbar = () => {
   const dispatch = useAppDispatch()
   const handleLogOut = () => {
     dispatch(setOnline(false))
-    dispatch(getUser())
-    signOut()
-    redirect('/')
+    signOut({ callbackUrl: '/'})
   }
+
   const user = useAppSelector((state) => state.persistedReducer.user.onlineUser)
   const [openModal, setOpenModal] = React.useState(false);
   const handleOpen = () => setOpenModal(true);

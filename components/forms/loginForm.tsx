@@ -9,12 +9,16 @@ import { Button, TextField } from "@mui/material";
 import { getMessage } from "@/redux/reducers/message";
 import { useAppDispatch, useAppSelector } from "@/types/reduxTypes";
 import { Alert } from "@mui/material";
+import { getOnlineUser } from "@/redux/reducers/users";
+import { useSession } from "next-auth/react";
+import { getConnectedUser } from "@/async_calls/user/getUser";
 
 const schema = object({ email: string().required("Email is required").email("Email is invalid").trim(),
   password: string().required("Password is required").min(5, "Password must between 6 and 20 characters").max(20, "Password must between 6 and 20 characters").trim()}).required();
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
+  const { data : session } = useSession();
   const message: string = useAppSelector((state) => state.persistedReducer.message.message );
 
   const {
@@ -23,20 +27,19 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm({resolver: yupResolver(schema)});
 
-  const onSubmit = (data: any) => {
-    signIn("credentials", {
+  const onSubmit = async (data: any) => {
+    const res = await signIn("credentials", {
       email: data.email,
       password: data.password,
-      redirect: false,
-    }).then(({ error }) => {
-      if (error) {
+      redirect: false
+    })
+    if (res?.error) {
         dispatch(getMessage("Wrong password or email"));
         setTimeout(() => {
           dispatch(getMessage(""));
         }, 3500);
         // toast("Credentials do not match!", { type: "error" });
-      }
-    });
+      } 
   };
 
   return (

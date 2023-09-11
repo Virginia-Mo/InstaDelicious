@@ -35,7 +35,7 @@ export default function RootLayout({
         <ProviderSession>
           <Layout2 children={children}/>
       </ProviderSession>
-      <footer> <p className='text-center text-black'>CopyRights @ Virginia Mo</p></footer>
+      <footer> <p className='text-center text-black'>Copyrights @ Virginia Mo</p></footer>
       </body>
     </html>
     

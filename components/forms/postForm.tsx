@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { Controller, useForm, useFieldArray } from "react-hook-form";
@@ -63,7 +64,7 @@ const PostForm = () => {
     control,
     name: "ingredients",
   });
-
+ 
   const [file, setFile] = useState(null);
   const message : string = useAppSelector((state) => state.persistedReducer.message.message)
 
@@ -81,9 +82,10 @@ const PostForm = () => {
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("upload_preset", "Instadelicious");
-      const fileData = await fetch(
-        `https://api.cloudinary.com/v1_1/dps629xiv/image/upload`,
+      formData.append("upload_preset", `${process.env.NEXT_PUBLIC_REACT_APP_PRESET_NAME}`);
+      try {
+          const fileData = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_REACT_APP_CLOUD_NAME}/image/upload`,
         {
           method: "POST",
           body: formData,
@@ -92,7 +94,10 @@ const PostForm = () => {
       if (fileData.secure_url) {
         image = fileData.secure_url;
       }
-    }
+    } catch (error) { 
+        console.log(error);
+      }
+    } 
     const options: optionsForm = {
       url: image,
       title: data.title,
@@ -100,9 +105,12 @@ const PostForm = () => {
       ingredients: ingredientsArray,
       details: data.details,
       token: session?.user.accessToken as string,
-      authorId: user.id,
-    };
-    AddPost(options);
+      authorId: user.id
+    }
+
+      AddPost(options)
+      
+    
   };
 
   const onChangeImage = (e: any) => {
@@ -215,7 +223,7 @@ const PostForm = () => {
                 )}
               />
 
-              <div className="flex flex-wrap justify-center">
+              <div className="flex flex-wrap justify-center gap-2">
                 {fields.map((item, index) => (
                   <li key={item.id} className="list-none">
                     {/* <input {...register(`ingredients.${index}.ingredient`)} /> */}
@@ -295,6 +303,6 @@ const PostForm = () => {
    
     </div>
   );
-};
 
+}
 export default PostForm;

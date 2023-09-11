@@ -6,7 +6,7 @@ import { getOnlineUserFollower, getOnlineUserFollowing } from "@/redux/reducers/
 import { NextResponse } from "next/server"
 
 export const GetFollow = (onlineUser : UserDB, users : UserDB[]) => {
-console.log("HERE IT IS")
+
 
     let followerArray : UserDB[] = []
     let followingArray : UserDB[] = []

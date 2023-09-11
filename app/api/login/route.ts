@@ -1,5 +1,6 @@
 import { signJwtAccess } from '@/lib/jwt'
 import prisma from '@/prisma/client'
+import { getOnlineUser } from '@/redux/reducers/users'
 const bcrypt = require('bcrypt')
 
 
@@ -28,7 +29,6 @@ export async function POST( request : Request) {
     const checkPassword : string = await bcrypt.compare(body.password, user?.password)
     if (user && checkPassword){
         const {password, ...userData} = user
-        
     const accessToken = signJwtAccess(userData)
     const result = {
             userData,

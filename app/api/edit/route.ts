@@ -12,7 +12,10 @@ interface RequestData {
     picture: string,
     bio: string,
 }
-
+interface RequestData2 {
+    email: string,
+    token: string,
+}
 export async function PATCH(req: Request) {
     const body: RequestData = await req.json()
     const bodyErrors: string[] = []
@@ -74,48 +77,6 @@ export async function PUT(req: Request) {
         if (!user) {
             throw new Error('Unable to update user')
         }  
-        return NextResponse.json({message : 'Your account has been updated successfully ! '})
-    }
-    catch (error){
-        console.log(error)
-        return NextResponse.json({message: 'Unable to create user'})
-    }
-} else {
-    console.log("Access denied")
-    return NextResponse.json({message: 'Access denied'})
-}
-}
-export async function DELETE(req: Request) {
-    const body: RequestData = await req.json()
-
-    const response = await handleToken(req)
-    const checkedToken = response
-    if (checkedToken !== null) {
-    try {
-        const user = await prisma.user.delete({
-            where: {
-                email: body.email
-            }
-        })
-        const posts = await prisma.post.deleteMany({
-            where: {
-                authorId: user.id
-            }
-        })
-        const comments = await prisma.comment.deleteMany({
-            where: {
-                authorId: user.id
-            }
-        })
-        const likes = await prisma.likes.deleteMany({
-            where: {
-                userLikes: user.id
-            }
-        })
-
-        // if (!user) {
-        //     throw new Error('Unable to update user')
-        // }  
         return NextResponse.json({message : 'Your account has been updated successfully ! '})
     }
     catch (error){

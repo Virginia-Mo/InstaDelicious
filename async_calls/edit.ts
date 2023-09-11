@@ -4,6 +4,10 @@ import axios from 'axios'
 import { getMessage } from '@/redux/reducers/message'
 import {store} from '@/redux/store/store'
 import { getConnectedUser } from './user/getUser'
+import { signOut } from 'next-auth/react'
+import { removeCurrentUser } from '@/redux/reducers/users'
+import { use } from 'react'
+import { useSession } from 'next-auth/react'
 
 interface stateType {
     email: string,
@@ -19,6 +23,11 @@ interface stateType {
     picture: string
     bio: string,
     id : number,
+    token : string
+  }
+ interface stateType3 {
+    id : number,
+    password: string,
     token : string
   }
 
@@ -72,20 +81,24 @@ export async function editProfile (data : stateType2) {
       return error
   }
     }
-export async function deleteAccount (data : stateType) {
+
+export async function deleteAccount (data : stateType3, session : any) {
     try {
-      const response = await axios.delete(`/api/edit`, 
-       {
-          email : data.email,
-      },
-      { headers : {
+      const response = await axios.post(`/api/edit/${data.id}`, 
+      { password : data.password },
+    { headers : {
         Authorization : `Bearer ${data.token}`}
        })
+
       if (response.status === 200) {
-        getConnectedUser(data.id)
         store.dispatch(getMessage(response.data.message))
         setTimeout(() => {
-           store.dispatch(getMessage(""))
+          if (response.data.message === "Your account has been deleted. We are sorry to see you go !" || response.data.message === "Access denied")
+          {
+            signOut({redirect: true, callbackUrl: '/'} )
+            store.dispatch(removeCurrentUser())
+            }
+            store.dispatch(getMessage(""))
            }, 2500);
       }
       return response

@@ -73,6 +73,10 @@ const SignupForm = () => {
         image = fileData.secure_url;
       }
     }
+    if (data.password !== data.confirmPassword) {
+      setError("Passwords don't match !");
+      return;
+    }
     const options: dataForm = {
       username: data.username,
       email: data.email,

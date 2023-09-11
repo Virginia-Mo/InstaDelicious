@@ -27,7 +27,7 @@ model User {
 model Follower {
   id                Int      @id @default(autoincrement())
   createdAt         DateTime @default(now()) @db.Date
-  user_id           User     @relation(fields: [userId], references: [id])
+  user_id           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            Int      @unique
   following_user_id Int[]    @default([])
   follower_user_id  Int[]    @default([])
@@ -39,9 +39,9 @@ model Post {
   title       String
   url         String      @unique
   description String
-  ingredients String[]       @default([])
+  ingredients String[]    @default([])
   details     String
-  author      User?       @relation(fields: [authorId], references: [id])
+  author      User?       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId    Int?
   tags        PostToTag[]
   comments    Comment[]
@@ -57,9 +57,9 @@ model Tag {
 
 model PostToTag {
   createdAt DateTime @default(now())
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
-  tag       Tag      @relation(fields: [tagId], references: [id])
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
   tagId     Int
 
   @@id([postId, tagId])
@@ -69,18 +69,18 @@ model Comment {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @db.Date
   text      String
-  author    User?    @relation(fields: [authorId], references: [id])
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int?
-  post      Post?    @relation(fields: [postId], references: [id])
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int?
 }
 
 model Likes {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now()) @db.Date
-  amount    Int      @default(0)
-  user      User[]
-  post      Post?    @relation(fields: [postId], references: [id])
-  postId    Int?     @unique
-  userslikes Int[]   @default([])
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now()) @db.Date
+  amount     Int      @default(0)
+  user       User[]
+  post       Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId     Int?     @unique
+  userslikes Int[]    @default([])
 }

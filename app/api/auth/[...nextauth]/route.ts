@@ -23,7 +23,6 @@ export const authOptions = {
         });
         const user: User = await res.data;
         if (user) { 
-          console.log(user)
           return user;
         } else {
           return null;
@@ -39,9 +38,6 @@ export const authOptions = {
       session.user = token as any;
       return session;
     },
-  },
-  pages: {
-    signIn: "/",
   },
 };
 const handler = NextAuth(authOptions);
