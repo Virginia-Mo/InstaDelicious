@@ -3,14 +3,14 @@ import React, {Component} from 'react';
 import './globals.css'
 import ProviderSession from '@/components/Providers/Providers'
 import Layout2 from '@/components/layout2';
-import { Dancing_Script, Inter } from 'next/font/google';
+import { Dancing_Script, Lato } from 'next/font/google';
 
 const dancing = Dancing_Script({ 
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-dancing'})
 
-const inter = Inter({ 
+const inter = Lato({ 
     subsets: ['latin'],
     display: 'swap',
     weight: ['400', '700'],

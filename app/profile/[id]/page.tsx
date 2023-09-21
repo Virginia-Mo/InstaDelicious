@@ -28,13 +28,24 @@ import PersonIcon from '@mui/icons-material/Person';
 import { deletePost, getPosts } from '@/async_calls/posts';
 import { Alert } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
+import styles from './profile.module.css'
+import IconButton, { IconButtonProps } from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ShareIcon from '@mui/icons-material/Share';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import CardActions from '@mui/material/CardActions';
+import { AddLikes, MinusLikes } from '@/async_calls/likes';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import { pink } from '@mui/material/colors';
+import { set } from 'react-hook-form';
+
 
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 800,
   // bgcolor: 'background.paper',
   // border: '2px solid #000',
   boxShadow: 24
@@ -58,7 +69,22 @@ export default function Profile ({ params }: { params: { id: number } }) {
   const [followings, setFollowing] = React.useState(true);
   const [openFollowBox, setOpenFollowBox] = React.useState(false)
   const [openFollowBox2, setOpenFollowBox2] = React.useState(false)
-  
+  const [deletedpost, setPost] = React.useState(false)
+  const [like, setLike] = React.useState(false);
+  const [likesAmount, setLikesAmount] = React.useState(0)
+
+
+  const handleLike = () => {
+    console.log(selectedPost.like.userslikes)
+    AddLikes(selectedPost.id, user.id)
+    setLike(true)
+    setLikesAmount(likesAmount + 1)
+  }
+  const handleMinusLike = () => {
+    MinusLikes(selectedPost.id, user.id)
+    setLike(false)
+    setLikesAmount(likesAmount - 1)
+  }
   const id = +params.id
   let foundUser  = users.find((user) => user.id === id)
 
@@ -108,7 +134,14 @@ let foundFollower = onlineUserFollowing.some((item)=> item.id === foundUser?.id)
   } else {
     setFollowing(false)
   }
-},[])
+  if (selectedPost){
+    const likes = selectedPost.like.amount
+    setLikesAmount(likes)
+  }
+    if (selectedPost.like && selectedPost.like.userslikes.includes(foundUser?.id)) {
+      setLike(true)
+    }
+},[selectedPost.like])
 
   useEffect(() => {
   if (foundUser){
@@ -125,11 +158,13 @@ useEffect(() => {
 }, [message])
 
 const handleOpen = (post : Post) => {
+  console.log("post ici");
   setSelectedImg('')
   setselectedPost('')
   setSelectedImg(post.url)
   setselectedPost(post)
-  setOpen(true);}
+  setOpen(true)
+  console.log("post", selectedPost);}
 
 const handleClose = () => {
   setSelectedImg('')
@@ -177,8 +212,10 @@ const handleDelete = async (id : number) => {
   }
   const res : Response = await deletePost(datas)
   if (res.status === 200) {
+    setPost(true)
     setTimeout(() => {
    router.push(`/home`)
+   setPost(false)
     }, 1500)
   }
   }
@@ -189,13 +226,14 @@ if (status === "loading"){
 if (status === "unauthenticated") {
   return <p>Access Denied</p>
 } 
+console.log(followers)
   return (
   
     <div className='flex h-screen'>
      <Navbar />
     <div className='flex justify-center mt-10  overflow-auto section-scroll grow'>
     <main className='pd-6 w-7/12'>
-      <section className='flex text-2xl gap-32 pb-16 border border-transparent border-b-red-300 mb-2'>
+      <section className='flex text-2xl gap-32 pb-8 border border-transparent border-b-red-300 mb-2'>
         <div>
           <BigAvatars user={foundUser} />
         </div> 
@@ -229,7 +267,12 @@ if (status === "unauthenticated") {
             {
               followers !== undefined && 
               <>
-              <p onClick={handleOpenFollow}> <span className='font-bold'> {followers.length}</span> followers</p>
+{   (followers.length > 1)    &&  
+     <p onClick={handleOpenFollow}> <span className='font-bold'> {followers.length}</span> followers</p>
+}
+{   (followers.length === 1)    &&  
+     <p onClick={handleOpenFollow}> <span className='font-bold'> {followers.length}</span> follower</p>
+}
                   
                     <Dialog
                       open={openFollowBox}
@@ -307,13 +350,15 @@ if (status === "unauthenticated") {
           // aria-labelledby="modal-modal-title"
           // aria-describedby="modal-modal-description"
         >
-      <Box sx={style} className="flex">
-          <div className='flex  h-4/6' >
+      <Box sx={style}>
+        {!deletedpost &&
+        <div className={styles.box_profile} >
             <div className='w-8/12 flex'>
-              <img src={selectedImg} alt="" className='' />
+              <img src={selectedImg} alt="" className='w-full' />
               </div>
-              <div className='text-white bg-gray-800 relative grow p-2'>
-                <div className='flex'>
+              <div className='text-white bg-gray-800 relative w-4/12 p-2 flex justify-between flex-col'>
+                <div>
+                <div className='flex pt-2'>
               <Avatar alt={foundUser?.username} src={foundUser?.picture} sx={{ width: 45, height: 45}} />
               <p className='font-semibold flex items-center ml-2'>{foundUser?.username}</p>
               </div>
@@ -326,12 +371,52 @@ if (status === "unauthenticated") {
               <p className='py-3 px-2 '>{selectedPost.title}</p> </div>
              { (foundUser?.id === user.id) && 
                 <DeleteIcon color="primary" fontSize="large" className='absolute top-2 right-2' onClick={() => handleDelete(selectedPost.id)}/>
-             }</div>
+             }
+             </div>
+</div>
+             <div className='border-t-red-100 border-t my-2'>
+              <div className='flex items-center'>
+              <CardActions disableSpacing>
+        <IconButton aria-label="add to favorites">
+          {(like) && 
+          <FavoriteIcon sx={{ color: pink[500] }} fontSize='large' onClick={handleMinusLike}/> }
+          {(!like) &&
+          <FavoriteBorderOutlinedIcon fontSize='large' onClick={handleLike}/>
+          }
+        </IconButton>
+        <BookmarkIcon color="disabled" fontSize='large'aria-label="bookmark">
+          <ShareIcon />
+        </BookmarkIcon>
+
+      </CardActions>
+      <Typography className='px-4'>
+
+{(likesAmount === 0 ) &&
+<span>Be the first to like this</span>
+}
+{(likesAmount === 1 && !like) && 
+<span>{likesAmount} person likes this post</span>
+}
+{(likesAmount === 1 && like) && 
+<span>You like this post</span>
+}
+{(likesAmount > 1 && !like) &&
+<span>{likesAmount} people like this post</span>
+}
+{(likesAmount > 1 && like) && 
+<span>You and {likesAmount} like this post</span>
+}
+
+</Typography>
+</div>
+             </div>
               </div>
               </div>
-    {message &&
-      <div className=' flex justify-center items-center'>
-      <Alert severity="success" variant='filled'>
+        }
+          
+    {(message && deletedpost) &&
+      <div className='w-full'>
+      <Alert severity="success" variant='filled' className='flex justify-center items-center w-full'>
        {message}
       </Alert></div>
       }

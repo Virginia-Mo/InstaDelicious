@@ -92,6 +92,7 @@ const PostForm = () => {
         }
       ).then((res) => res.json());
       if (fileData.secure_url) {
+        console.log(fileData)
         image = fileData.secure_url;
       }
     } catch (error) { 
