@@ -65,7 +65,8 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   boxShadow: 24,
-  p: 4,
+  bgcolor: 'background.paper',
+  p: 2,
 };
 const handleUsers = (id : number) => {
   const newUsersArray = randomUsers.filter((user) => user.id !== id)
@@ -240,23 +241,6 @@ const handleChange = (e : Event) => {
         </div>
   </div>  
 }
-
-
-        {/* {
-          !openSearch && 
-        <ul className='flex flex-col font-mono text-xl gap-4 px-4'>
-          <li><Link href="/"> Home</Link></li>
-          <li ><SearchIcon fontSize="large" /> Search</li>
-          <li><Link href={`/profile/${user.id}`}>  Profile </Link> </li>
-          <li > </li>
-        </ul>
-        }
-{
-  openSearch && <div className='flex flex-col gap-4 px-4'>
-          <li ><Button onClick={handleSearch}><SearchIcon fontSize="large" /> Search</Button></li>
-
-  </div>
-} */}
         <p className='absolute left-0 bottom-0 px-4 hover:bg-pink-200 rounded-lg' onClick={handleLogOut}><LogoutIcon fontSize='large' /> Log Out </p>
       </nav>
     </aside>

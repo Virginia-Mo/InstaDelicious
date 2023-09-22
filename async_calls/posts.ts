@@ -15,14 +15,15 @@ interface stateType {
   ingredients: string[],
   url: string,
   authorId : number,
-  token : string
+  token : string,
+  tags : string[]
 }
 interface stateType2 {
     id : number,
     token : string
   }
 export const AddPost = async (data : stateType) => {
-    try {
+    try { 
         const response = await axios.post(`/api/posts`, 
          {
             title : data.title,
@@ -30,7 +31,8 @@ export const AddPost = async (data : stateType) => {
             description : data.description,
             details : data.details,
             ingredients : data.ingredients,
-            url : data.url
+            url : data.url,
+            tags : data.tags
         },
         { headers : {
             Authorization : `Bearer ${data.token}`}

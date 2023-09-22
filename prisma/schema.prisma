@@ -59,10 +59,10 @@ model PostToTag {
   createdAt DateTime @default(now())
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
-  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  tagId     Int
+  tag       Tag      @relation(fields: [tagName], references: [name], onDelete: Cascade)
+  tagName   String
 
-  @@id([postId, tagId])
+  @@id([postId, tagName])
 }
 
 model Comment {

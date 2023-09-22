@@ -20,14 +20,40 @@ interface RequestData {
     description: string,
     details: string,
     ingredients: string,
-    url: string
+    url: string,
+    tags : string[]
   }
 export async function POST(request : Request) {
   const body : RequestData = await request.json()
   const response = await handleToken(request)
   const checkedToken = response
   if (checkedToken !== null) {
-      try {
+      try {   
+        const tags = await prisma.tag.findMany()
+
+        const tagNames = tags.map((tag) => tag.name)
+
+        const hashtags = body.tags.filter((hashtag) => {
+            return (!tagNames.includes(hashtag))
+        }
+        )
+
+        if (hashtags.length > 0) {
+          try {
+           const newTags = await prisma.tag.createMany({
+                data: hashtags.map((hashtag) => {
+                    return {
+                        name: hashtag
+                    }
+                })
+            })
+          const newTagsArray = await prisma.tag.findMany()
+            console.log(newTagsArray)
+          } catch (error) {
+              console.log(error)
+        }
+      }
+
           const response = await prisma.post.create({
               data : {
                 title: body.title,
@@ -35,17 +61,25 @@ export async function POST(request : Request) {
                 description: body.description,
                 details: body.details,
                 ingredients: body.ingredients,
-                url: body.url
-              }
-          })
-          if (response){
-            const addLike = await prisma.likes.create({
-                data: {
-                    amount: 0,
-                    postId: response.id
-          }})
-          return NextResponse.json({message : 'Your post has been created successfully ! '})
-       }
+                url: body.url,
+                tags : {
+                  connect: body.tags.map((tag) => {
+                    return {
+                      name: tag
+                    }   
+                  })
+                  }
+                }
+                })
+                console.log(response)
+      //     if (response){
+      //       const addLike = await prisma.likes.create({
+      //           data: {
+      //               amount: 0,
+      //               postId: response.id
+      //     }})
+      //     return NextResponse.json({message : 'Your post has been created successfully ! '})
+      //  }
       }
        catch (error){
           console.log(error)

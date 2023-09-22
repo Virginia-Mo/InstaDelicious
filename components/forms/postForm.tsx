@@ -36,6 +36,11 @@ const schema = object({
     })
   ),
   details: string(),
+  hashtags: yup.array().of(
+    yup.object().shape({
+      hashtag: yup.string(),
+    })
+  ),
 }).required();
 
 interface optionsForm {
@@ -46,6 +51,7 @@ interface optionsForm {
   details: string;
   token: string;
   authorId: number;
+  tags: string[];
 }
 
 const PostForm = () => {
@@ -56,15 +62,20 @@ const PostForm = () => {
   } = useForm({
     defaultValues: {
       ingredients: [{ ingredient: "" }],
+      hashtags: [{ hashtag: "" }],
     },
     resolver: yupResolver(schema),
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields : ingredientsField, append : ingredientsAppend, remove: ingredientsRemove} = useFieldArray({
     control,
     name: "ingredients",
   });
- 
+  const { fields : hashtagsField, append : hashtagsAppend, remove : hashtagsRemove } = useFieldArray({
+    control,
+    name: "hashtags",
+  });
+
   const [file, setFile] = useState(null);
   const message : string = useAppSelector((state) => state.persistedReducer.message.message)
 
@@ -74,8 +85,15 @@ const PostForm = () => {
   const { data: session } = useSession();
 
   const handleSubmitForm = async (data: any, e: Event) => {
-    const ingredientsArray: string[] = data.ingredients.map(
+    e.preventDefault();
+    const filteredIngredients = data.ingredients.filter((ing : { ingredient : string} )=> ing.ingredient !== "")
+    const ingredientsArray: string[] = filteredIngredients.map(
       (ingredient: { ingredient: string }) => ingredient.ingredient
+    );
+    
+    const filteredHashtags = data.hashtags.filter((hash : { hashtag : string})=> hash.hashtag !== "" && hash.hashtag !== undefined)
+    const hashtagsArray: string[] = filteredHashtags.map(
+      (hashtag: { hashtag: string }) => hashtag.hashtag
     );
 
     let image;
@@ -106,9 +124,9 @@ const PostForm = () => {
       ingredients: ingredientsArray,
       details: data.details,
       token: session?.user.accessToken as string,
-      authorId: user.id
+      authorId: user.id,
+      tags: hashtagsArray
     }
-
       AddPost(options)
       
     
@@ -185,7 +203,9 @@ const PostForm = () => {
             </div>
           </SwiperSlide>
           <SwiperSlide>
+
             <div className="h-full flex flex-col justify-center items-center gap-7 flex-wrap">
+            <h2 className=" font-sans font-bold text-4xl "> What's on your plate ? </h2>
               <Controller
                 name="title"
                 control={control}
@@ -211,6 +231,7 @@ const PostForm = () => {
                   <TextField
                     {...field}
                     multiline
+                    maxRows={2}
                     id="description"
                     label="Description"
                     className="w-80"
@@ -225,7 +246,7 @@ const PostForm = () => {
               />
 
               <div className="flex flex-wrap justify-center gap-2">
-                {fields.map((item, index) => (
+                {ingredientsField.map((item, index) => (
                   <li key={item.id} className="list-none">
                     {/* <input {...register(`ingredients.${index}.ingredient`)} /> */}
                     {/* <Controller
@@ -239,7 +260,6 @@ const PostForm = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          //   id={`ingredients.${index}`}
                           type="text"
                           variant="outlined"
                           label="Ingredient"
@@ -256,9 +276,9 @@ const PostForm = () => {
                   </li>
                 ))}
 
-                {fields.length < 10 && (
+                {ingredientsField.length < 10 && (
                   <p
-                    onClick={() => append({ ingredient: "" })}
+                    onClick={() => ingredientsAppend({ ingredient: "" })}
                     className="py-auto px-2 items-center cursor-pointer"
                   >
                     <AddCircleOutlineIcon
@@ -277,6 +297,7 @@ const PostForm = () => {
                   <TextField
                     {...field}
                     multiline
+                    maxRows={2}
                     id="details"
                     variant="outlined"
                     aria-label="Step to Step"
@@ -292,11 +313,57 @@ const PostForm = () => {
                 )}
               />
 
-              <Button type="submit" variant="outlined" className="w-80">
-                Submit
-              </Button>
             </div>
           </SwiperSlide>
+          <SwiperSlide>
+            <div className="h-full flex flex-col justify-center items-center gap-14 flex-wrap">
+            <h2 className=" font-sans font-bold text-4xl ">Add up to 10 hashtags ! </h2>
+          <div className="flex flex-wrap justify-center gap-2 ">
+                {hashtagsField.map((item, index) => (
+                  <li key={item.id} className="list-none">
+
+                    <Controller
+                      name={`hashtags.${index}.hashtag`}
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          //   id={`ingredients.${index}`}
+                          type="text"
+                          variant="outlined"
+                          label="Hahstag"
+                          className="w-fit"
+                          helperText={
+                            errors?.hashtags
+                              ? errors?.hashtags?.message?.toString()
+                              : null
+                          }
+                          error={errors?.hashtags ? true : false}
+                        />
+                      )}
+                    />
+                  </li>
+                ))}
+
+                {hashtagsField.length < 10 && (
+                  <p
+                    onClick={() => hashtagsAppend({ ingredient: "" })}
+                    className="py-auto px-2 items-center cursor-pointer"
+                  >
+                    <AddCircleOutlineIcon
+                      aria-label="add an ingredient"
+                      size="large"
+                    />
+                  </p>
+                )}
+                </div>
+             
+                        <Button type="submit" variant="outlined" className="w-80">
+                Submit
+              </Button>
+               </div>
+          </SwiperSlide>
+
         </div>
       </Swiper>
     </form>
